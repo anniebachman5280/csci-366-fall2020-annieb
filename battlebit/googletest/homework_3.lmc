@@ -2,6 +2,7 @@
 ;; in Little Man Computer assembly
 ;; Paste the code below, along with the output
 
+; INPUT ----------------------------------------------
 
         STA A
 LOOP    LDA A
@@ -20,3 +21,16 @@ ENDTHIS LDA A
 A       DAT 1
 ONE     DAT 1
 B       DAT 9
+
+
+; OUTPUT ----------------------------------------------
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
