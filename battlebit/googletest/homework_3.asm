@@ -17,18 +17,18 @@ find_max:
 L1:
 CMP rax, [rdi] ; compare the two values
 JL L2 ; jump less
-ADD rdi, 8 ; move array pointer
-DEC R8 ; decrease value of R8
-JNZ L1 ; jump if not 0
-ret ; zero, return.
+ADD rdi, 8 ; move array pointer 8 bits
+DEC R8 ; decrease value of R8 by 1
+JNZ L1 ; jump if not 0 (R8)
+ret ; R8 is zero, return.
 
 ; Loop 2
 L2:
 MOV rax, [rdi] ; move new max into rax
-ADD rdi, 8 ; move array pointer
-DEC R8 ; decrease value of R8
-JNZ L1 ; jump is not 0
-ret ; zero, return.
+ADD rdi, 8 ; move array pointer 8 bits
+DEC R8 ; decrease value of R8 by 1
+JNZ L1 ; jump if not 0 (R8)
+ret ; R8 is zero, return.
 
 
 
