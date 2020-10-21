@@ -78,7 +78,17 @@ int game_load_board(struct game *game, int player, char * spec) {
     // to see if it is a valid layout (no off-the-board positions
     // and no overlapping ships)
     //
-
+    printf("\n%s\n", spec);
+    int j = 0;
+    for (int i = 0; i < 5; i++)
+    {
+        printf("%c" ,spec[j]);
+        j++;
+        printf("%c" ,spec[j]);
+        j++;
+        printf("%c" ,spec[j]);
+        j++;
+    }
     // if it is valid, you should write the corresponding unsigned
     // long long value into the Game->players[player].ships data
     // slot and return 1
