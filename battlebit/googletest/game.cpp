@@ -149,6 +149,7 @@ TEST(add_ship_horizontal,empty_ship){
     //EXPECT_TRUE(strcmp("Baz", "Baz") == 0);
     ASSERT_EQ(add_ship_horizontal(player_info,1,8,0),1);
 }
+
 TEST(add_ship_horizontal,load_ship){
     game_init();
     struct game * gameon = game_get_current();
