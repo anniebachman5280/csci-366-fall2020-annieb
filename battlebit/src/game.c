@@ -135,7 +135,7 @@ int game_load_board(struct game *game, int player, char * spec) {
 
     int usedL [] = {0 ,0, 0, 0, 0};
 
-    player_info player_info = game->players[player];
+    player_info *player_info = &game->players[player];
 
     int j = 0;
     int x;
@@ -310,8 +310,8 @@ int game_load_board(struct game *game, int player, char * spec) {
             printf("\nHere\n");
             //check1 = add_ship_horizontal(&GAME->players[player], x, y, length);
             //check1 = add_ship_horizontal(&player_info, x, y, length);
-            check1 = add_ship_horizontal(&player_info, x, y, length);
-            printf("H Updated SHIPS: %llu\n" , player_info.ships);
+            check1 = add_ship_horizontal(player_info, x, y, length);
+            printf("H Updated SHIPS: %llu\n" , player_info->ships);
             printf("H Updated SHIPS: %llu\n" ,&GAME->players[player].ships);
             printf("H Updated SHIPS: %llu\n" ,game->players[player].ships);
             //printf("Updated SHIPS: %llu\n" , &GAME->players[player].ships);
@@ -324,8 +324,8 @@ int game_load_board(struct game *game, int player, char * spec) {
         {
             //add_ship_vertical(&GAME->players[player], x, y, length);
             //check1 = add_ship_vertical(&GAME->players[player], x, y, length);
-            check1 = add_ship_vertical(&player_info, x, y, length);
-            printf("V Updated SHIPS: %llu\n" , player_info.ships);
+            check1 = add_ship_vertical(player_info, x, y, length);
+            printf("V Updated SHIPS: %llu\n" , player_info->ships);
             printf("V Updated SHIPS: %llu\n" ,&GAME->players[player].ships);
             printf("V Updated SHIPS: %llu\n" ,game->players[player].ships);
             if (check1 == -1)
