@@ -42,19 +42,57 @@ int game_fire(game *game, int player, int x, int y) {
     //
     //  If the opponents ships value is 0, they have no remaining ships, and you should set the game state to
     //  PLAYER_1_WINS or PLAYER_2_WINS depending on who won.
-    player_info player_info = game->players[player];
-    printf("%llu\n", &game->players->ships);
-    printf("%llu\n", &game->players->shots);
-    printf("%llu\n", &game->players->hits);
+    //player_info *player_info = &game->players[player];
+    //printf("%llu\n", &game->players->ships);
+    //printf("%llu\n", &game->players->shots);
+    //printf("%llu\n", &game->players->hits);
+
+    int otherPlayer = player ^ player;
+
+    printf("%d\n", player);
+    printf("%d\n", otherPlayer);
     printf("%llu\n", game->players[player].ships);
-    printf("%llu\n", player_info.ships);
-    printf("%llu\n", player_info.shots);
-    printf("%llu\n", player_info.hits);
+    printf("%llu\n", game->players[otherPlayer].ships);
+    printf("%llu\n", game->players->ships);
+    printf("%llu\n", game->players[player].shots);
+    printf("%llu\n", game->players[otherPlayer].shots);
+    printf("%llu\n", game->players->shots);
+    printf("%llu\n", game->players[player].hits);
+    printf("%llu\n", game->players[otherPlayer].hits);
+    printf("%llu\n\n", game->players->hits);
+    //printf("%llu\n", player_info->ships);
+    //printf("%llu\n", player_info->shots);
+    //printf("%llu\n", player_info->hits);
 
-    unsigned long long s = xy_to_bitval(x, y);
-    player_info.shots = player_info.shots | s;
+    unsigned long long fire = xy_to_bitval(x, y);
+    game->players[player].shots = game->players[player].shots | fire;
 
-    if(player_info.ships == 0)
+    if(((game->players[otherPlayer].ships) & fire) != 0)
+    {
+        printf("HIT\n");
+        game->players[player].hits = game->players[player].hits | fire;
+        game->players[otherPlayer].ships = game->players[otherPlayer].ships ^ fire;
+        return 1;
+    }
+    else if (((game->players[otherPlayer].ships) & fire) == 0)
+    {
+            printf("MISS\n");
+            return 0;
+    }
+
+    printf("%d\n", player);
+    printf("%d\n", otherPlayer);
+    printf("%llu\n", game->players[0].ships);
+    printf("%llu\n", game->players[1].ships);
+    printf("%llu\n", game->players->ships);
+    printf("%llu\n", game->players[0].shots);
+    printf("%llu\n", game->players[1].shots);
+    printf("%llu\n", game->players->shots);
+    printf("%llu\n", game->players[0].hits);
+    printf("%llu\n", game->players[1].hits);
+    printf("%llu\n\n", game->players->hits);
+
+    if(game->players->ships == 0)
     {
         if(player == 0)
         {
