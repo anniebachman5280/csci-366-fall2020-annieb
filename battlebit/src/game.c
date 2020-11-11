@@ -42,6 +42,30 @@ int game_fire(game *game, int player, int x, int y) {
     //
     //  If the opponents ships value is 0, they have no remaining ships, and you should set the game state to
     //  PLAYER_1_WINS or PLAYER_2_WINS depending on who won.
+
+    player_info player_info = game->players[player];
+    printf("%llu\n", &GAME->players->ships);
+    printf("%llu\n", &GAME->players->shots);
+    printf("%llu\n", &GAME->players->hits);
+    printf("%llu\n", player_info.ships);
+    printf("%llu\n", player_info.shots);
+    printf("%llu\n", player_info.hits);
+
+    unsigned long long s = xy_to_bitval(x, y);
+    player_info.shots = player_info.shots | s;
+
+    if(player_info.ships == 0)
+    {
+        if(player == 0)
+        {
+            game->status = PLAYER_1_WINS;
+        }
+        else if (player == 1)
+        {
+            game->status = PLAYER_0_WINS;
+        }
+
+    }
 }
 
 unsigned long long int xy_to_bitval(int x, int y) {

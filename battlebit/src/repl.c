@@ -98,9 +98,38 @@ void repl_print_ships(player_info *player_info, char_buff *buffer) {
     //  to determine if a ship is at the position or not.  If it is present
     //  you need to print an X.  If not, you need to print a space character ' '
 
-    printf("%llu ", player_info->ships);
+    //printf("%llu ", player_info->ships);
 
-    buffer->buffer = 0;
+    unsigned long long test;
+    cb_append(buffer , "  0 1 2 3 4 5 6 7 ");
+    char str[0];
+    for (int j = 0; j < 8; j++)
+    {
+        //printf("\nOutter %d %d\n", j);
+        sprintf(str, "%d", j);
+        cb_append(buffer, "\n");
+        cb_append(buffer, str);
+        for (int k = 0; k < 8; k++)
+        {
+            printf("Inner %d %d\n", j , k);
+            test = xy_to_bitval(j,k);
+
+            if ((test & player_info->ships) != 0)
+            {
+                printf("\nIF: %d  %llu\n", test, player_info->ships);
+                cb_append(buffer, "  ");
+            }
+            else if ((test & player_info->ships) == 0)
+            {
+                printf("\nELSE: %d  %llu\n", test, player_info->ships);
+                cb_append(buffer, " *");
+            }
+            printf("&%d\n", test & player_info->ships);
+            cb_print(buffer);
+        }
+
+    }
+
 }
 
 void repl_print_hits(struct player_info *player_info, struct char_buff *buffer) {
