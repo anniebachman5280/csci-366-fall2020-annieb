@@ -42,11 +42,11 @@ int game_fire(game *game, int player, int x, int y) {
     //
     //  If the opponents ships value is 0, they have no remaining ships, and you should set the game state to
     //  PLAYER_1_WINS or PLAYER_2_WINS depending on who won.
-
     player_info player_info = game->players[player];
-    printf("%llu\n", &GAME->players->ships);
-    printf("%llu\n", &GAME->players->shots);
-    printf("%llu\n", &GAME->players->hits);
+    printf("%llu\n", &game->players->ships);
+    printf("%llu\n", &game->players->shots);
+    printf("%llu\n", &game->players->hits);
+    printf("%llu\n", game->players[player].ships);
     printf("%llu\n", player_info.ships);
     printf("%llu\n", player_info.shots);
     printf("%llu\n", player_info.hits);
@@ -110,6 +110,12 @@ int game_load_board(struct game *game, int player, char * spec) {
     //
     printf("\n%s\n", spec);
 
+    if(spec == NULL)
+    {
+        printf("Spec Null \n");
+        return -1;
+    }
+
     if (strlen(spec) != 15)
    {
         printf("Not 15 length \n");
@@ -125,6 +131,7 @@ int game_load_board(struct game *game, int player, char * spec) {
         printf("Not digit \n");
         return -1;
     }
+
 
     int usedL [] = {0 ,0, 0, 0, 0};
 
@@ -286,7 +293,8 @@ int game_load_board(struct game *game, int player, char * spec) {
         }
         j++;
 
-        //printf("%c" ,spec[j]);
+        printf("%d", j);
+        printf("%c" ,spec[j]);
         x = spec[j] - '0';
         printf("x = %d \n", x);
         j++;
@@ -301,8 +309,11 @@ int game_load_board(struct game *game, int player, char * spec) {
         {
             printf("\nHere\n");
             //check1 = add_ship_horizontal(&GAME->players[player], x, y, length);
+            //check1 = add_ship_horizontal(&player_info, x, y, length);
             check1 = add_ship_horizontal(&player_info, x, y, length);
-            printf("Updated SHIPS: %llu\n" , player_info.ships);
+            printf("H Updated SHIPS: %llu\n" , player_info.ships);
+            printf("H Updated SHIPS: %llu\n" ,&GAME->players[player].ships);
+            printf("H Updated SHIPS: %llu\n" ,game->players[player].ships);
             //printf("Updated SHIPS: %llu\n" , &GAME->players[player].ships);
             if (check1 == -1)
             {
@@ -311,9 +322,12 @@ int game_load_board(struct game *game, int player, char * spec) {
         }
         else if (spec[j-3] == 'c' || spec[j-3] == 'b' || spec[j-3] == 'd' || spec[j-3] == 's' || spec[j-3] == 'p')
         {
-            add_ship_vertical(&GAME->players[player], x, y, length);
-            check1 = add_ship_horizontal(&GAME->players[player], x, y, length);
-            printf("Updated SHIPS: %llu\n" ,&GAME->players[player].ships);
+            //add_ship_vertical(&GAME->players[player], x, y, length);
+            //check1 = add_ship_vertical(&GAME->players[player], x, y, length);
+            check1 = add_ship_vertical(&player_info, x, y, length);
+            printf("V Updated SHIPS: %llu\n" , player_info.ships);
+            printf("V Updated SHIPS: %llu\n" ,&GAME->players[player].ships);
+            printf("V Updated SHIPS: %llu\n" ,game->players[player].ships);
             if (check1 == -1)
             {
                 return -1;
@@ -326,6 +340,7 @@ int game_load_board(struct game *game, int player, char * spec) {
 
     }
     return 1;
+
     // if it is valid, you should write the corresponding unsigned
     // long long value into the Game->players[player].ships data
     // slot and return 1
@@ -344,16 +359,16 @@ int add_ship_horizontal(player_info *player, int x, int y, int length) {
     unsigned long long p = player->ships;
     for (int i = x; i < (x + length); i++)
     {
-        printf("\nSHIPS: %llu\n" ,p);
-        t = xy_to_bitval(newx,y);
-        printf("XY : %d %d \n" , newx, y);
-        printf("T: %llu\n", t);
+        printf("\nSHIPS H: %llu\n" ,p);
+        t = xy_to_bitval(newx,newy);
+        printf("XY : %d %d \n" , newx, newy);
+        printf("xy to bit val: %llu\n", t);
         //player->ships = player->ships | t;
         //printf("New SHIPS: %llu\n" ,player->ships);
         newx += 1;
         if ((t & p) != 0)
         {
-            printf("Should be -1");
+            printf("Should be -1\n");
             return -1;
         }
         else
@@ -380,16 +395,16 @@ int add_ship_vertical(player_info *player, int x, int y, int length) {
     unsigned long long p = player->ships;
     for (int i = y; i < (y + length); i++)
     {
-        printf("\nSHIPS: %llu\n" ,p);
+        printf("\nSHIPS V: %llu\n" ,p);
         t = xy_to_bitval(newx,newy);
         printf("XY : %d %d \n" , newx, newy);
-        printf("T: %llu\n", t);
+        printf("xy to bit val: %llu\n", t);
         //player->ships = player->ships | t;
         //printf("New SHIPS: %llu\n" ,player->ships);
         newy += 1;
         if ((t & p) != 0)
         {
-            printf("Should be -1");
+            printf("Should be -1\n");
             return -1;
         }
         else
@@ -401,6 +416,6 @@ int add_ship_vertical(player_info *player, int x, int y, int length) {
     printf("Should be 1\n");
     //player->ships = t & player->ships;
     player->ships = p;
-    printf("Updated SHIPS H: %llu\n" ,player->ships);
+    printf("Updated SHIPS V: %llu\n" ,player->ships);
     return 1;
 }
