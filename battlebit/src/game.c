@@ -162,9 +162,9 @@ int game_load_board(struct game *game, int player, char * spec) {
     // to see if it is a valid layout (no off-the-board positions
     // and no overlapping ships)
     //
-<<<<<<< HEAD
 
-=======
+
+
     //printf("\n%s\n", spec);
 
     if(spec == NULL)
@@ -401,7 +401,7 @@ int game_load_board(struct game *game, int player, char * spec) {
         game->status = PLAYER_0_TURN;
     }
     return 1;
->>>>>>> b66c5c23a566f59ae9c96d2098265c227f44c697
+
 
     // if it is valid, you should write the corresponding unsigned
     // long long value into the Game->players[player].ships data
@@ -415,8 +415,7 @@ int add_ship_horizontal(player_info *player, int x, int y, int length) {
     // returns 1 if the ship can be added, -1 if not
     // hint: this can be defined recursively
 
-<<<<<<< HEAD
-=======
+
     int newx = x;
     int newy = y;
     unsigned long long t;
@@ -446,7 +445,7 @@ int add_ship_horizontal(player_info *player, int x, int y, int length) {
     player->ships = p;
     //printf("Updated SHIPS H: %llu\n" ,player->ships);
     return 1;
->>>>>>> b66c5c23a566f59ae9c96d2098265c227f44c697
+
 }
 
 int add_ship_vertical(player_info *player, int x, int y, int length) {
@@ -454,8 +453,7 @@ int add_ship_vertical(player_info *player, int x, int y, int length) {
     // returns 1 if the ship can be added, -1 if not
     // hint: this can be defined recursively
 
-<<<<<<< HEAD
-=======
+
     int newx = x;
     int newy = y;
     unsigned long long t;
@@ -485,5 +483,5 @@ int add_ship_vertical(player_info *player, int x, int y, int length) {
     player->ships = p;
     //printf("Updated SHIPS V: %llu\n" ,player->ships);
     return 1;
->>>>>>> b66c5c23a566f59ae9c96d2098265c227f44c697
+
 }
