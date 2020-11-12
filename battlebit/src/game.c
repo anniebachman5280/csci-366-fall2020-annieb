@@ -162,7 +162,7 @@ int game_load_board(struct game *game, int player, char * spec) {
     // to see if it is a valid layout (no off-the-board positions
     // and no overlapping ships)
     //
-    printf("\n%s\n", spec);
+    //printf("\n%s\n", spec);
 
     if(spec == NULL)
     {
@@ -198,10 +198,10 @@ int game_load_board(struct game *game, int player, char * spec) {
     int check1;
     for (int i = 0; i < 5; i++)
     {
-        printf("%c" ,spec[j]);
+      //  printf("%c" ,spec[j]);
         if (spec[j] == 'C' || spec[j] == 'c')
         {
-            printf("Length = 5\n" );
+           // printf("Length = 5\n" );
             length = 5;
             if (usedL[0] == 1)
             {
@@ -212,7 +212,7 @@ int game_load_board(struct game *game, int player, char * spec) {
             {
                 usedL[0] = 1;
             }
-            printf("+1: %d, +2: %d \n", spec[j+1]-'0', spec[j+2]-'0');
+           // printf("+1: %d, +2: %d \n", spec[j+1]-'0', spec[j+2]-'0');
             if(spec[j] == 'C')
             {
                 if((spec[j+1]-'0') > 3)
@@ -240,7 +240,7 @@ int game_load_board(struct game *game, int player, char * spec) {
             {
                 usedL[1] = 1;
             }
-            printf("+1: %d, +2: %d \n", spec[j+1]-'0', spec[j+2]-'0');
+           // printf("+1: %d, +2: %d \n", spec[j+1]-'0', spec[j+2]-'0');
             if(spec[j] == 'B')
             {
                 if((spec[j+1]-'0') > 4)
@@ -268,7 +268,7 @@ int game_load_board(struct game *game, int player, char * spec) {
             {
                 usedL[2] = 1;
             }
-            printf("+1: %d, +2: %d \n", spec[j+1]-'0', spec[j+2]-'0');
+            //printf("+1: %d, +2: %d \n", spec[j+1]-'0', spec[j+2]-'0');
             if(spec[j] == 'D')
             {
                 if((spec[j+1]-'0') > 5)
@@ -296,7 +296,7 @@ int game_load_board(struct game *game, int player, char * spec) {
             {
                 usedL[3] = 1;
             }
-            printf("+1: %d, +2: %d \n", spec[j+1]-'0', spec[j+2]-'0');
+           // printf("+1: %d, +2: %d \n", spec[j+1]-'0', spec[j+2]-'0');
             if(spec[j] == 'S')
             {
                 if((spec[j+1]-'0') > 5)
@@ -324,7 +324,7 @@ int game_load_board(struct game *game, int player, char * spec) {
             {
                 usedL[4] = 1;
             }
-            printf("+1: %d, +2: %d \n", spec[j+1]-'0', spec[j+2]-'0');
+           // printf("+1: %d, +2: %d \n", spec[j+1]-'0', spec[j+2]-'0');
             if(spec[j] == 'P')
             {
                 if((spec[j+1]-'0') > 6)
@@ -358,10 +358,10 @@ int game_load_board(struct game *game, int player, char * spec) {
         //printf("y = %d \n", y);
         j++;
 
-        printf("%c", spec[j-3]);
+       // printf("%c", spec[j-3]);
         if (spec[j-3] == 'C' || spec[j-3] == 'B' || spec[j-3] == 'D' || spec[j-3] == 'S' || spec[j-3] == 'P')
         {
-            printf("\nHere\n");
+           // printf("\nHere\n");
             //check1 = add_ship_horizontal(&GAME->players[player], x, y, length);
             //check1 = add_ship_horizontal(&player_info, x, y, length);
             check1 = add_ship_horizontal(player_info, x, y, length);

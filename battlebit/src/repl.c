@@ -110,7 +110,7 @@ void repl_print_ships(player_info *player_info, char_buff *buffer) {
         cb_append(buffer, str);
         for (int k = 0; k < 8; k++)
         {
-            printf("Inner %d %d\n", j , k);
+            //printf("Inner %d %d\n", j , k);
             test = xy_to_bitval(k,j);
             //if ((test & player_info->ships) != 0)
             if ((test & player_info->ships) != 0)
@@ -125,7 +125,7 @@ void repl_print_ships(player_info *player_info, char_buff *buffer) {
                 cb_append(buffer, "  ");
             }
           //  printf("&%d\n", test & player_info->ships);
-            cb_print(buffer);
+            //cb_print(buffer);
         }
 
     }
@@ -143,17 +143,6 @@ void repl_print_hits(struct player_info *player_info, struct char_buff *buffer) 
    // printf("\n%llu \n", player_info->ships);
    // printf("%llu \n", player_info->shots);
    // printf("%llu \n", player_info->hits);
-
-//    if ((player_info->shots & player_info->hits) != 0)
-//    {
-//        printf("Hit");
-//
-//    }
-//    else if ((player_info->shots & player_info->hits) == 0)
-//    {
-//        printf("miss");
-//    }
-
 
     unsigned long long test;
     cb_append(buffer , "  0 1 2 3 4 5 6 7");
@@ -183,7 +172,7 @@ void repl_print_hits(struct player_info *player_info, struct char_buff *buffer) 
             {
                 cb_append(buffer, "  ");
             }
-            cb_print(buffer);
+            //cb_print(buffer);
         }
 
     }
