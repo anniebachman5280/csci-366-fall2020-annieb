@@ -44,10 +44,20 @@ int game_fire(game *game, int player, int x, int y) {
     //  PLAYER_1_WINS or PLAYER_2_WINS depending on who won.
 
 
-    int otherPlayer = player ^ player;
+    int otherPlayer;
+    if (player == 1)
+    {
+        otherPlayer = 0;
+    }
+    if (player == 0)
+    {
+        otherPlayer = 1;
+    }
 
     unsigned long long fire = xy_to_bitval(x, y);
     game->players[player].shots = game->players[player].shots | fire;
+
+
 
 
     if(((game->players[otherPlayer].ships) & fire) != 0)
@@ -81,7 +91,7 @@ int game_fire(game *game, int player, int x, int y) {
     }
     else if (((game->players[otherPlayer].ships) & fire) == 0)
     {
-            //printf("MISS\n");
+          //  printf("MISS\n");
         if(player == 0)
         {
             game->status = PLAYER_1_TURN;
