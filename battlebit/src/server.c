@@ -147,10 +147,10 @@ int run_server() {
                                           (struct sockaddr *) &client,
                                           &size_from_connect)) > 0) {
             SERVER->player_sockets[player] = client_socket_fd;
-            pthread_create(&SERVER->player_sockets, NULL,  handle_client_connect(player), player);
+            pthread_create(&SERVER->player_sockets, NULL,  handle_client_connect, player);
             player++;
             SERVER->player_sockets[player] = client_socket_fd;
-            pthread_create(&SERVER->player_sockets, NULL, handle_client_connect(player), player);
+            pthread_create(&SERVER->player_sockets, NULL, handle_client_connect, player);
             if (player > 1) {
                 break;
             }
