@@ -44,6 +44,7 @@ int game_fire(game *game, int player, int x, int y) {
     //  PLAYER_1_WINS or PLAYER_2_WINS depending on who won.
 
 
+    // set otherplayer to be 0 or 1 depending on what player is
     int otherPlayer;
     if (player == 1)
     {
@@ -54,17 +55,22 @@ int game_fire(game *game, int player, int x, int y) {
         otherPlayer = 1;
     }
 
+    // get the bitval for the fire coordniate
     unsigned long long fire = xy_to_bitval(x, y);
+
+    // bit set the shot position for the fire
     game->players[player].shots = game->players[player].shots | fire;
 
-
-
-
+    // check for bit set of the ships and fired shot, if != 0, then it was a hit
     if(((game->players[otherPlayer].ships) & fire) != 0)
     {
         //printf("HIT\n");
+
+        // update hits and ships
         game->players[player].hits = game->players[player].hits | fire;
         game->players[otherPlayer].ships = game->players[otherPlayer].ships ^ fire;
+
+        // change game status for turns depending on who is the current player
         if(player == 0)
         {
             game->status = PLAYER_1_TURN;
@@ -73,6 +79,8 @@ int game_fire(game *game, int player, int x, int y) {
         {
             game->status = PLAYER_0_TURN;
         }
+
+        // change game staatus for if a player ships is 0, no more ships left
         if(game->players[otherPlayer].ships == 0)
         {
             if(player == 0)
@@ -89,9 +97,13 @@ int game_fire(game *game, int player, int x, int y) {
         }
         return 1;
     }
+
+    // case for a miss shot
     else if (((game->players[otherPlayer].ships) & fire) == 0)
     {
           //  printf("MISS\n");
+
+        // change player turns
         if(player == 0)
         {
             game->status = PLAYER_1_TURN;
@@ -103,6 +115,7 @@ int game_fire(game *game, int player, int x, int y) {
         return 0;
     }
 
+    //case for player wining game
     if(game->players[otherPlayer].ships == 0)
     {
         if(player == 0)
@@ -159,6 +172,7 @@ unsigned long long int xy_to_bitval(int x, int y) {
         // Print Result
         // printf("X = %d, Y = %d, Unsigned Long Long = %llu  \n", x, y, my_unsigned_int_64);
     }
+    // return unsigned long long value for x,y coord
     return my_unsigned_int_64;
 }
 
@@ -177,38 +191,94 @@ int game_load_board(struct game *game, int player, char * spec) {
 
     //printf("\n%s\n", spec);
 
+    // cases for wrong specs
+    // empty spec
     if(spec == NULL)
     {
         //printf("Spec Null \n");
         return -1;
     }
 
+    // not correct length spec
     if (strlen(spec) != 15)
    {
         //printf("Not 15 length \n");
         return -1;
     }
+    // does not begin with a character
     else if(!isalpha(spec[0]))
     {
         //printf("Not Char \n");
         return -1;
     }
+    // next to numbers are not numbers
     else if (!isdigit(spec[1]) || !isdigit(spec[2]))
     {
         //printf("Not digit \n");
         return -1;
     }
+    // check char in the right place
+    else if(!isalpha(spec[3]))
+    {
+        //printf("Not Char \n");
+        return -1;
+    }
+    // next to numbers are not numbers
+    else if (!isdigit(spec[4]) || !isdigit(spec[5]))
+    {
+        //printf("Not digit \n");
+        return -1;
+    }
+    else if(!isalpha(spec[6]))
+    {
+        //printf("Not Char \n");
+        return -1;
+    }
+        // next to numbers are not numbers
+    else if (!isdigit(spec[7]) || !isdigit(spec[8]))
+    {
+        //printf("Not digit \n");
+        return -1;
+    }
+    else if(!isalpha(spec[9]))
+    {
+        //printf("Not Char \n");
+        return -1;
+    }
+        // next to numbers are not numbers
+    else if (!isdigit(spec[10]) || !isdigit(spec[11]))
+    {
+        //printf("Not digit \n");
+        return -1;
+    }
+    else if(!isalpha(spec[12]))
+    {
+        //printf("Not Char \n");
+        return -1;
+    }
+        // next to numbers are not numbers
+    else if (!isdigit(spec[13]) || !isdigit(spec[14]))
+    {
+        //printf("Not digit \n");
+        return -1;
+    }
 
-
+    // array to keep track of which char has been used, in order c, b, d, s, p
     int usedL [] = {0 ,0, 0, 0, 0};
 
+    // create pointer to what is at address of game player
     player_info *player_info = &game->players[player];
 
+    // vars
     int j = 0;
     int x;
     int y;
     int length;
     int check1;
+
+    // begin for loop, checking three array index at a time checks for which letter is given, sets
+    // length depending on the letter, calls the add hor/vert depending on letter case
+    // also checks for off board ships
     for (int i = 0; i < 5; i++)
     {
       //  printf("%c" ,spec[j]);
@@ -425,11 +495,15 @@ int add_ship_horizontal(player_info *player, int x, int y, int length) {
     // returns 1 if the ship can be added, -1 if not
     // hint: this can be defined recursively
 
-
+    // vars
     int newx = x;
     int newy = y;
     unsigned long long t;
+    // new var for ship, set ships to this new var at the end
     unsigned long long p = player->ships;
+
+    // for each length of the ship, get bitval and check to make sure there is no ship there already
+    // if no new ship, set bitval position
     for (int i = x; i < (x + length); i++)
     {
         //printf("\nSHIPS H: %llu\n" ,p);
@@ -463,11 +537,15 @@ int add_ship_vertical(player_info *player, int x, int y, int length) {
     // returns 1 if the ship can be added, -1 if not
     // hint: this can be defined recursively
 
-
+    // vars
     int newx = x;
     int newy = y;
     unsigned long long t;
+    // new var for ship, set ships to this new var at the end
     unsigned long long p = player->ships;
+
+    // for each length of the ship, get bitval and check to make sure there is no ship there already
+    // if no new ship, set bitval position
     for (int i = y; i < (y + length); i++)
     {
         //printf("\nSHIPS V: %llu\n" ,p);

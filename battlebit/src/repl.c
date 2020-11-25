@@ -110,9 +110,13 @@ void repl_print_ships(player_info *player_info, char_buff *buffer) {
 
    // printf("\n%llu \n", player_info->ships);
     //unsigned long long test1 = 8070451636549550111;
+
+    // vars
     unsigned long long test;
     cb_append(buffer , "  0 1 2 3 4 5 6 7");
     char str[0];
+    // loop over the 8x8 grid and check for if  there is a ship using &
+    // * if there is, space if nothing
     for (int j = 0; j < 8; j++)
     {
         sprintf(str, "%d", j);
@@ -154,9 +158,12 @@ void repl_print_hits(struct player_info *player_info, struct char_buff *buffer) 
    // printf("%llu \n", player_info->shots);
    // printf("%llu \n", player_info->hits);
 
+   // vars
     unsigned long long test;
     cb_append(buffer , "  0 1 2 3 4 5 6 7");
     char str[0];
+    // loop over the 8x8 grid and check for if  there is a shot using &
+    // H if there is a hit , M for a miss
     for (int j = 0; j < 8; j++)
     {
         sprintf(str, "%d", j);

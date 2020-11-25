@@ -62,6 +62,27 @@ int handle_client_connect(int player) {
                 if(strcmp(command, "help") == 0)
                 {
                     cb_append(output_buffer, "A useful help message...");
+
+                    cb_append(output_buffer, "? - show help\n");
+                    cb_append(output_buffer, "load [0-1] <string> - load a ship layout file for the given player\n");
+                    cb_append(output_buffer, "show [0-1] - shows the board for the given player\n");
+                    cb_append(output_buffer, "fire [0-1] [0-7] [0-7] - fire at the given position\n");
+                    cb_append(output_buffer, "say <string> - Send the string to all players as part of a chat\n");
+                    cb_append(output_buffer, "\"exit - quit the server\\n\"");
+
+                    cb_append(output_buffer, command);
+
+                    cb_write(client_socket_fd, output_buffer);
+                }
+                else if(strcmp(command, "?") == 0)
+                {
+                    cb_append(output_buffer, "? - show help\n");
+                    cb_append(output_buffer, "load [0-1] <string> - load a ship layout file for the given player\n");
+                    cb_append(output_buffer, "show [0-1] - shows the board for the given player\n");
+                    cb_append(output_buffer, "fire [0-1] [0-7] [0-7] - fire at the given position\n");
+                    cb_append(output_buffer, "say <string> - Send the string to all players as part of a chat\n");
+                    cb_append(output_buffer, "\"exit - quit the server\\n\"");
+
                     cb_append(output_buffer, command);
 
                     cb_write(client_socket_fd, output_buffer);
@@ -69,8 +90,12 @@ int handle_client_connect(int player) {
                 else if (strcmp(command, "quit") == 0){
                     close(client_socket_fd);
                 }
-                else if (strcmp(command, "saw") == 0){
+                else if (strcmp(command, "exit") == 0){
+                    close(client_socket_fd);
+                }
+                else if (strcmp(command, "say") == 0){
                     char *string = input_buffer->buffer;
+                    server_broadcast(string);
                 }
                 else if (command != NULL){
                     cb_append(output_buffer, "Command was :");
@@ -165,6 +190,8 @@ int server_start() {
     init_server();
     pthread_create(&SERVER->server_thread, NULL, (void *) run_server, NULL);
 
+
+    /* Testing with one terminal */
 
 /*    int server_socket_fd = socket(AF_INET,
                                   SOCK_STREAM,
