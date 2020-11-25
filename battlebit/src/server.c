@@ -40,6 +40,24 @@ int handle_client_connect(int player) {
     // be working against network sockets rather than standard out, and you will need
     // to coordinate turns via the game::status field.
 
+    printf("\nplayer %d\n", player);
+    int otherPlayer;
+    if (player == 1)
+    {
+        otherPlayer = 0;
+    }
+    else if (player == 0)
+    {
+        otherPlayer = 1;
+    }
+    else{
+        printf("player error");
+    }
+
+
+    printf("Otherplayer %d\n", otherPlayer);
+
+
         int client_socket_fd = SERVER->player_sockets[player];
         char raw_buffer[2000];
         char_buff *input_buffer = cb_create(2000);
@@ -64,29 +82,40 @@ int handle_client_connect(int player) {
 
                 char *command = cb_tokenize(input_buffer, " \r\n");
                 char* arg1 = cb_next_token(input_buffer);
-                char* arg2 = cb_next_token(input_buffer);
-                char* arg3 = cb_next_token(input_buffer);
                 int n1;
                 int n2;
                 int n3;
 
-                while (cb_next_token(input_buffer) != NULL)
-                {
-                    //char *n = cb_next_token(input_buffer);
-                  //cb_write(client_socket_fd, output_buffer);
-
-                }
 
                 //printf("\no\n%s", command);
+                if (player == 0)
+                {
+                    printf("%d", player);
+                    cb_append(output_buffer, "you are player 0\n");
+                    cb_write(client_socket_fd, output_buffer);
+                }
+                else if (player == 1)
+                {
+                    printf("%d", player);
+                    cb_append(output_buffer, "you are player 1\n");
+                    cb_write(client_socket_fd, output_buffer);
+                }
+                else
+                {
+                    printf("%d", player);
+                    cb_append(output_buffer, "you are player not 1 or 0\n");
+                    cb_write(client_socket_fd, output_buffer);
+                }
 
                 if(strcmp(command, "help") == 0)
                 {
+
                     cb_append(output_buffer, "A useful help message...");
 
                     cb_append(output_buffer, "? - show help\n");
-                    cb_append(output_buffer, "load [0-1] <string> - load a ship layout file for the given player\n");
-                    cb_append(output_buffer, "show [0-1] - shows the board for the given player\n");
-                    cb_append(output_buffer, "fire [0-1] [0-7] [0-7] - fire at the given position\n");
+                    cb_append(output_buffer, "load <string> - load a ship layout file for the given player\n");
+                    cb_append(output_buffer, "show - shows the board for the given player\n");
+                    cb_append(output_buffer, "fire [0-7] [0-7] - fire at the given position\n");
                     cb_append(output_buffer, "say <string> - Send the string to all players as part of a chat\n");
                     cb_append(output_buffer, "\"exit - quit the server\\n\"");
 
@@ -97,9 +126,9 @@ int handle_client_connect(int player) {
                 else if(strcmp(command, "?") == 0)
                 {
                     cb_append(output_buffer, "? - show help\n");
-                    cb_append(output_buffer, "load [0-1] <string> - load a ship layout file for the given player\n");
-                    cb_append(output_buffer, "show [0-1] - shows the board for the given player\n");
-                    cb_append(output_buffer, "fire [0-1] [0-7] [0-7] - fire at the given position\n");
+                    cb_append(output_buffer, "load <string> - load a ship layout file for the given player\n");
+                    cb_append(output_buffer, "show- shows the board for the given player\n");
+                    cb_append(output_buffer, "fire [0-7] [0-7] - fire at the given position\n");
                     cb_append(output_buffer, "say <string> - Send the string to all players as part of a chat\n");
                     cb_append(output_buffer, "\"exit - quit the server\\n\"");
 
@@ -116,24 +145,27 @@ int handle_client_connect(int player) {
                 else if (strcmp(command, "show") == 0){
                     //game_get_current()->players[1].ships;
                    // game_load_board(game_get_current(), , );
-                    n1 = atoi(arg1);
-                    repl_print_board(game_get_current(), n1,  output_buffer);
-                    cb_print(output_buffer);
+                   // n1 = atoi(arg1);
+                   repl_print_board(game_get_current(), player,  output_buffer);
+                    //cb_print(output_buffer);
+                    //cb_append(output_buffer, p);
                     cb_write(client_socket_fd, output_buffer);
                     //repl_print_ships();
                 }
                 else if (strcmp(command, "load") == 0){
                     //game_get_current()->players[1].ships;
                     n1 = atoi(arg1);
-                    game_load_board(game_get_current(), n1, arg2);
+                    cb_append(output_buffer, arg1);
+                    cb_write(client_socket_fd, output_buffer);
+                    game_load_board(game_get_current(), player, arg1);
                     //repl_print_ships();
                 }
                 else if (strcmp(command, "fire") == 0){
                     //game_get_current()->players[1].ships;
-                    n1 = atoi(arg1);
+/*                    n1 = atoi(arg1);
                     n2= atoi(arg2);
                     n3= atoi(arg3);
-                    int f = game_fire(game_get_current(), n1, n2, n3);
+                    int f = game_fire(game_get_current(), otherPlayer, n1, n2);
                     if (f == 0){
                         cb_append(output_buffer, "\nMISS\n");
                         cb_write(client_socket_fd, output_buffer);
@@ -142,13 +174,27 @@ int handle_client_connect(int player) {
                     {
                         cb_append(output_buffer, "\nHIT\n");
                         cb_write(client_socket_fd, output_buffer);
-                    }
+                    }*/
 
                 }
                 else if (strcmp(command, "say") == 0){
                    char *string = input_buffer->buffer;
 
-                   // server_broadcast(input_buffer);
+                    cb_append(p, "\n");
+                    while (cb_next_token(input_buffer) != NULL)
+                    {
+                        printf("done");
+                        char *n = cb_next_token(input_buffer);
+                        cb_append(p, n);
+                        cb_append(p, " ");
+                        server_broadcast(p);
+                      //  printf("1%s\n", n);
+                        //printf("2%s", );
+                        //cb_write(client_socket_fd, output_buffer);
+
+                    }
+
+                   // server_broadcast(string);
 
                   // printf("2%s", string);
                 //   printf("3%s", input_buffer);
@@ -171,13 +217,18 @@ int handle_client_connect(int player) {
 
                     cb_write(client_socket_fd, output_buffer);
                 }
+                else
+                {
+                    cb_reset(output_buffer);
+                    cb_append(output_buffer, "\nbattleBit (? for hekp) > ");
+                    cb_write(client_socket_fd, output_buffer);
+                }
                 cb_reset(output_buffer);
                 cb_append(output_buffer, "\nbattleBit (? for hekp) > ");
                 cb_write(client_socket_fd, output_buffer);
-
             }
-
         }
+
 }
 
 void server_broadcast(char_buff *msg) {
@@ -186,11 +237,11 @@ void server_broadcast(char_buff *msg) {
         //SERVER->player_sockets[i];
      //   cb_write(SERVER->player_sockets[i], msg);
    // }
-  //  char_buff *m = cb_create(2000);
-  //  cb_append(m, "l");
+   // char_buff *m = cb_create(2000);
+   // cb_append(m, msg->buffer);
   //  cb_append(m, msg->buffer);
-  //  cb_write(SERVER->player_sockets[0], m);
- //   cb_write(SERVER->player_sockets[1], m);
+    cb_write(SERVER->player_sockets[0], msg);
+    cb_write(SERVER->player_sockets[1], msg);
     printf("1%s", msg->buffer);
 }
 
@@ -239,17 +290,21 @@ int run_server() {
 
         struct sockaddr_in client;
         socklen_t size_from_connect;
-        int client_socket_fd;
+        int client_socket_fd;er stuff
         int player = 0;
-
+        printf("%1d\n", player);
         while ((client_socket_fd = accept(server_socket_fd,
                                           (struct sockaddr *) &client,
                                           &size_from_connect)) > 0) {
+            printf("%2d\n", player);
             SERVER->player_sockets[player] = client_socket_fd;
-            pthread_create(&SERVER->player_threads, NULL,  handle_client_connect, player);
+            pthread_create(&SERVER->player_threads[player], NULL,  handle_client_connect, player);
+            printf("%3d\n", player);
             player++;
-            SERVER->player_sockets[player] = client_socket_fd;
-            pthread_create(&SERVER->player_threads, NULL, handle_client_connect, player);
+            printf("%4d\n", player);
+            //SERVER->player_sockets[player] = client_socket_fd;
+           // pthread_create(&SERVER->player_threads, NULL, handle_client_connect, player);
+            printf("%5d\n", player);
             if (player > 1) {
                 break;
             }
