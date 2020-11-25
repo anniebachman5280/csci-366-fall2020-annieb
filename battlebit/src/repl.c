@@ -93,11 +93,11 @@ void repl_execute_command(struct char_buff * buffer) {
             n3 = atoi(arg3);
           int f = game_fire(game_get_current(), n1, n2, n3);
           if (f == 0){
-              printf("\nHIT\n");
+              printf("\nMISS\n");
           }
           else if (f == 1)
           {
-              printf("\nMISS\n");
+              printf("\nHIT\n");
           }
 
         } else if (strcmp(command, "nasm") == 0) {

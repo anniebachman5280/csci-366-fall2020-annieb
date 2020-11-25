@@ -63,35 +63,19 @@ int handle_client_connect(int player) {
                 printf("\n\n1\n%s", input_buffer->buffer);
 
                 char *command = cb_tokenize(input_buffer, " \r\n");
+                char* arg1 = cb_next_token(input_buffer);
+                char* arg2 = cb_next_token(input_buffer);
+                char* arg3 = cb_next_token(input_buffer);
+                int n1;
+                int n2;
+                int n3;
 
                 while (cb_next_token(input_buffer) != NULL)
                 {
-                    char *n = cb_next_token(input_buffer);
-                   // cb_append(p, n);
-                  //  server_broadcast(p);
-                  cb_write(client_socket_fd, output_buffer);
-                   // cb_append(nc, n);
-                   // printf("\n\n2\n%s", n);
-                   // printf("\n\n3\n%s", input_buffer->buffer);
-                   // printf("\n\n3\n%s", input_buffer);
-                    //printf("\n\n4\n%s", cb_next_token(input_buffer));
-                   // printf("\n\n4\n%s", nc);
+                    //char *n = cb_next_token(input_buffer);
+                  //cb_write(client_socket_fd, output_buffer);
+
                 }
-                char *n1 = cb_next_token(input_buffer);
-                char *n2 = cb_next_token(input_buffer);
-                char *n3 = cb_next_token(input_buffer);
-                char *n4 = cb_next_token(input_buffer);
-                char *n5 = cb_next_token(input_buffer);
-                printf("\n\n2\n%s", input_buffer->buffer);
-                printf("\n\n3\n%s", command);
-                printf("\n\n4\n%s", n1);
-                printf("\n\n2\n%s", input_buffer->buffer);
-                printf("\n\n5\n%s", n2);
-                printf("\n\n6\n%s", n3);
-                printf("\n\n2\n%s", input_buffer->buffer);
-                printf("\n\n7\n%s", n4);
-                printf("\n\n2\n%s", input_buffer->buffer);
-                printf("\n\n8\n%s", n5);
 
                 //printf("\no\n%s", command);
 
@@ -132,15 +116,34 @@ int handle_client_connect(int player) {
                 else if (strcmp(command, "show") == 0){
                     //game_get_current()->players[1].ships;
                    // game_load_board(game_get_current(), , );
-                    repl_print_board(game_get_current(), 1,  output_buffer);
+                    n1 = atoi(arg1);
+                    repl_print_board(game_get_current(), n1,  output_buffer);
                     cb_print(output_buffer);
                     cb_write(client_socket_fd, output_buffer);
                     //repl_print_ships();
                 }
                 else if (strcmp(command, "load") == 0){
                     //game_get_current()->players[1].ships;
-                    game_load_board(game_get_current(), 1, "C00b02D23S47p71");
+                    n1 = atoi(arg1);
+                    game_load_board(game_get_current(), n1, arg2);
                     //repl_print_ships();
+                }
+                else if (strcmp(command, "fire") == 0){
+                    //game_get_current()->players[1].ships;
+                    n1 = atoi(arg1);
+                    n2= atoi(arg2);
+                    n3= atoi(arg3);
+                    int f = game_fire(game_get_current(), n1, n2, n3);
+                    if (f == 0){
+                        cb_append(output_buffer, "\nMISS\n");
+                        cb_write(client_socket_fd, output_buffer);
+                    }
+                    else if (f == 1)
+                    {
+                        cb_append(output_buffer, "\nHIT\n");
+                        cb_write(client_socket_fd, output_buffer);
+                    }
+
                 }
                 else if (strcmp(command, "say") == 0){
                    char *string = input_buffer->buffer;
