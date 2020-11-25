@@ -36,10 +36,17 @@ struct char_buff * repl_read_command(char * prompt) {
 
 void repl_execute_command(struct char_buff * buffer) {
     char* command = cb_tokenize(buffer, " \n");
+
+    //struct game * g = game_get_current();
+  //  game *gameon = game_get_current();
+
     if (command) {
         char* arg1 = cb_next_token(buffer);
         char* arg2 = cb_next_token(buffer);
         char* arg3 = cb_next_token(buffer);
+        printf("%s", arg1);
+        printf("%s", arg2);
+        printf("%s", arg3);
         if (strcmp(command, "exit") == 0) {
             printf("goodbye!");
             exit(EXIT_SUCCESS);
@@ -57,6 +64,7 @@ void repl_execute_command(struct char_buff * buffer) {
         } else if(strcmp(command, "show") == 0) {
 
             // work with repl_print_board
+            //repl_print_board(g, arg1, g->players->ships);
 
         } else if(strcmp(command, "reset") == 0) {
 
@@ -65,10 +73,12 @@ void repl_execute_command(struct char_buff * buffer) {
         } else if (strcmp(command, "load") == 0) {
 
             // work with game_load_board
+            //game_load_board((, arg1, arg2);
 
         } else if (strcmp(command, "fire") == 0) {
 
             // work with game_fire
+           // game_fire( gameon, arg1, arg2, arg3);
 
         } else if (strcmp(command, "nasm") == 0) {
             nasm_hello_world();
