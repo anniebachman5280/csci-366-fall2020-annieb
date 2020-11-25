@@ -9,6 +9,7 @@
 #include "server.h"
 #include "char_buff.h"
 
+
 extern void nasm_hello_world();
 
 struct char_buff * repl_read_command(char * prompt) {
@@ -39,14 +40,20 @@ void repl_execute_command(struct char_buff * buffer) {
 
     //struct game * g = game_get_current();
   //  game *gameon = game_get_current();
-
+    char_buff *n = cb_create(2000);
     if (command) {
         char* arg1 = cb_next_token(buffer);
         char* arg2 = cb_next_token(buffer);
         char* arg3 = cb_next_token(buffer);
-        printf("%s", arg1);
-        printf("%s", arg2);
-        printf("%s", arg3);
+        int n1;
+        int n2;
+        int n3;
+        printf("1%s\n", arg1);
+        printf("2%s\n", arg2);
+        printf("3%s\n", arg3);
+        printf("p%d\n", n1);
+       // printf("p%d\n", n2);
+      //  printf("p%d\n", n3);
         if (strcmp(command, "exit") == 0) {
             printf("goodbye!");
             exit(EXIT_SUCCESS);
@@ -64,7 +71,9 @@ void repl_execute_command(struct char_buff * buffer) {
         } else if(strcmp(command, "show") == 0) {
 
             // work with repl_print_board
-            //repl_print_board(g, arg1, g->players->ships);
+            n1 = atoi(arg1);
+            repl_print_board(game_get_current(), n1, n);
+            cb_print(n);
 
         } else if(strcmp(command, "reset") == 0) {
 
@@ -73,12 +82,23 @@ void repl_execute_command(struct char_buff * buffer) {
         } else if (strcmp(command, "load") == 0) {
 
             // work with game_load_board
-            //game_load_board((, arg1, arg2);
+            n1 = atoi(arg1);
+            game_load_board(game_get_current(), n1, arg2);
 
         } else if (strcmp(command, "fire") == 0) {
 
             // work with game_fire
-           // game_fire( gameon, arg1, arg2, arg3);
+            n1 = atoi(arg1);
+            n2 = atoi(arg2);
+            n3 = atoi(arg3);
+          int f = game_fire(game_get_current(), n1, n2, n3);
+          if (f == 0){
+              printf("\nHIT\n");
+          }
+          else if (f == 1)
+          {
+              printf("\nMISS\n");
+          }
 
         } else if (strcmp(command, "nasm") == 0) {
             nasm_hello_world();

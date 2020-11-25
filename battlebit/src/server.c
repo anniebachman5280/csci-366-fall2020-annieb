@@ -45,6 +45,8 @@ int handle_client_connect(int player) {
         char_buff *input_buffer = cb_create(2000);
         char_buff *output_buffer = cb_create(2000);
 
+        char_buff *p = cb_create(2000);
+
         int read_size;
         cb_append(output_buffer, "\nbattleBit (? for help) >");
         cb_write(client_socket_fd, output_buffer);
@@ -58,7 +60,41 @@ int handle_client_connect(int player) {
 
                 cb_append(input_buffer, raw_buffer);
 
+                printf("\n\n1\n%s", input_buffer->buffer);
+
                 char *command = cb_tokenize(input_buffer, " \r\n");
+
+                while (cb_next_token(input_buffer) != NULL)
+                {
+                    char *n = cb_next_token(input_buffer);
+                   // cb_append(p, n);
+                  //  server_broadcast(p);
+                  cb_write(client_socket_fd, output_buffer);
+                   // cb_append(nc, n);
+                   // printf("\n\n2\n%s", n);
+                   // printf("\n\n3\n%s", input_buffer->buffer);
+                   // printf("\n\n3\n%s", input_buffer);
+                    //printf("\n\n4\n%s", cb_next_token(input_buffer));
+                   // printf("\n\n4\n%s", nc);
+                }
+                char *n1 = cb_next_token(input_buffer);
+                char *n2 = cb_next_token(input_buffer);
+                char *n3 = cb_next_token(input_buffer);
+                char *n4 = cb_next_token(input_buffer);
+                char *n5 = cb_next_token(input_buffer);
+                printf("\n\n2\n%s", input_buffer->buffer);
+                printf("\n\n3\n%s", command);
+                printf("\n\n4\n%s", n1);
+                printf("\n\n2\n%s", input_buffer->buffer);
+                printf("\n\n5\n%s", n2);
+                printf("\n\n6\n%s", n3);
+                printf("\n\n2\n%s", input_buffer->buffer);
+                printf("\n\n7\n%s", n4);
+                printf("\n\n2\n%s", input_buffer->buffer);
+                printf("\n\n8\n%s", n5);
+
+                //printf("\no\n%s", command);
+
                 if(strcmp(command, "help") == 0)
                 {
                     cb_append(output_buffer, "A useful help message...");
@@ -93,9 +129,38 @@ int handle_client_connect(int player) {
                 else if (strcmp(command, "exit") == 0){
                     close(client_socket_fd);
                 }
+                else if (strcmp(command, "show") == 0){
+                    //game_get_current()->players[1].ships;
+                   // game_load_board(game_get_current(), , );
+                    repl_print_board(game_get_current(), 1,  output_buffer);
+                    cb_print(output_buffer);
+                    cb_write(client_socket_fd, output_buffer);
+                    //repl_print_ships();
+                }
+                else if (strcmp(command, "load") == 0){
+                    //game_get_current()->players[1].ships;
+                    game_load_board(game_get_current(), 1, "C00b02D23S47p71");
+                    //repl_print_ships();
+                }
                 else if (strcmp(command, "say") == 0){
-                    char *string = input_buffer->buffer;
-                    server_broadcast(string);
+                   char *string = input_buffer->buffer;
+
+                   // server_broadcast(input_buffer);
+
+                  // printf("2%s", string);
+                //   printf("3%s", input_buffer);
+               //     printf("3%s", input_buffer->buffer);
+                //  char *string = &input_buffer->buffer;
+                   // printf("%s", string->buffer);
+                   // printf("%s", *string);
+
+                  // server_broadcast(input_buffer);
+                 // cb_print(input_buffer);
+                 // cb_print();
+                   // printf("%s", *command);
+                  // char *str = input_buffer;
+                 //  printf("%s", str);
+
                 }
                 else if (command != NULL){
                     cb_append(output_buffer, "Command was :");
@@ -106,6 +171,7 @@ int handle_client_connect(int player) {
                 cb_reset(output_buffer);
                 cb_append(output_buffer, "\nbattleBit (? for hekp) > ");
                 cb_write(client_socket_fd, output_buffer);
+
             }
 
         }
@@ -113,11 +179,16 @@ int handle_client_connect(int player) {
 
 void server_broadcast(char_buff *msg) {
     // send message to all players
-    for (int i =0; i < 1; ++i){
-        SERVER->player_sockets[i];
-        //char_buff.write();
-    }
-    printf("%s", msg->buffer);
+ //   for (int i =0; i < 1; ++i){
+        //SERVER->player_sockets[i];
+     //   cb_write(SERVER->player_sockets[i], msg);
+   // }
+  //  char_buff *m = cb_create(2000);
+  //  cb_append(m, "l");
+  //  cb_append(m, msg->buffer);
+  //  cb_write(SERVER->player_sockets[0], m);
+ //   cb_write(SERVER->player_sockets[1], m);
+    printf("1%s", msg->buffer);
 }
 
 int run_server() {
