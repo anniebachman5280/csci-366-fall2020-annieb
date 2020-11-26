@@ -66,7 +66,14 @@ int handle_client_connect(int player) {
         char_buff *p = cb_create(2000);
 
         int read_size;
-        cb_append(output_buffer, "\nbattleBit (? for help) >");
+        if (player == 0) {
+            cb_append(output_buffer, "Welcome to the battleBit server Player 0 \n");
+            cb_append(output_buffer, "battleBit (? for help) > ");
+        }
+        else if (player == 1) {
+        cb_append(output_buffer, "Welcome to the battleBit server Player 1 \n");
+        cb_append(output_buffer, "battleBit (? for help) > ");
+    }
         cb_write(client_socket_fd, output_buffer);
 
         while((read_size = recv(client_socket_fd, raw_buffer, 2000, 0)) > 0)
@@ -90,14 +97,14 @@ int handle_client_connect(int player) {
                 if (player == 0)
                 {
                     //printf("%d", player);
-                    cb_append(output_buffer, "you are player 0\n");
-                    cb_write(client_socket_fd, output_buffer);
+                    //cb_append(output_buffer, "you are player 0\n");
+                    //cb_write(client_socket_fd, output_buffer);
                 }
                 else if (player == 1)
                 {
                    // printf("%d", player);
-                    cb_append(output_buffer, "you are player 1\n");
-                    cb_write(client_socket_fd, output_buffer);
+                   // cb_append(output_buffer, "you are player 1\n");
+                   // cb_write(client_socket_fd, output_buffer);
                 }
                 if (game_get_current()->status == 2){
                     //printf("Its Player's 0 turn\n");
@@ -123,28 +130,25 @@ int handle_client_connect(int player) {
 
                 if(strcmp(command, "help") == 0)
                 {
-
-                    cb_append(output_buffer, "A useful help message...");
-
                     cb_append(output_buffer, "? - show help\n");
-                    cb_append(output_buffer, "load <string> - load a ship layout file for the given player\n");
-                    cb_append(output_buffer, "show - shows the board for the given player\n");
+                    cb_append(output_buffer, "load <string> - load a ship layout \n");
+                    cb_append(output_buffer, "show - shows the board \n");
                     cb_append(output_buffer, "fire [0-7] [0-7] - fire at the given position\n");
                     cb_append(output_buffer, "say <string> - Send the string to all players as part of a chat\n");
-                    cb_append(output_buffer, "\"exit - quit the server\\n\"");
+                    cb_append(output_buffer, "exit \n");
 
-                    cb_append(output_buffer, command);
+                    //cb_append(output_buffer, command);
 
                     cb_write(client_socket_fd, output_buffer);
                 }
                 else if(strcmp(command, "?") == 0)
                 {
                     cb_append(output_buffer, "? - show help\n");
-                    cb_append(output_buffer, "load <string> - load a ship layout file for the given player\n");
-                    cb_append(output_buffer, "show- shows the board for the given player\n");
+                    cb_append(output_buffer, "load <string> - load a ship layout \n");
+                    cb_append(output_buffer, "show - shows the board \n");
                     cb_append(output_buffer, "fire [0-7] [0-7] - fire at the given position\n");
                     cb_append(output_buffer, "say <string> - Send the string to all players as part of a chat\n");
-                    cb_append(output_buffer, "\"exit - quit the server\\n\"");
+                    cb_append(output_buffer, "exit \n");
 
                     cb_append(output_buffer, command);
 
@@ -168,16 +172,28 @@ int handle_client_connect(int player) {
                 }
                 else if (strcmp(command, "load") == 0){
                     //game_get_current()->players[1].ships;
-                    if ((game_get_current()->status == 1)) {
+                    if ((game_get_current()->status > 1)) {
                         //printf("Its Player's 1 turn");
-                        cb_append(output_buffer, "Waiting On Player 1");
+                        cb_append(output_buffer, "Already Loaded Board");
                         cb_write(client_socket_fd, output_buffer);
                     }
                     else {
-                        n1 = atoi(arg1);
-                        cb_append(output_buffer, arg1);
-                        cb_write(client_socket_fd, output_buffer);
-                        game_load_board(game_get_current(), player, arg1);
+                        //n1 = atoi(arg1);
+                        if (player == 0) {
+                            cb_append(output_buffer, arg1);
+                            cb_write(client_socket_fd, output_buffer);
+                            game_load_board(game_get_current(), player, arg1);
+                            cb_append(output_buffer, "Waiting On Player 1");
+                            cb_write(client_socket_fd, output_buffer);
+                        }
+                        else if (player == 1){
+                            cb_append(output_buffer, arg1);
+                            cb_write(client_socket_fd, output_buffer);
+                            game_load_board(game_get_current(), player, arg1);
+                            cb_append(output_buffer, "All Player Boards Loaded");
+                            cb_append(output_buffer, "Player 0 Turn");
+                            cb_write(client_socket_fd, output_buffer);
+                        }
                     }
                     //repl_print_ships();
                 }
@@ -194,20 +210,53 @@ int handle_client_connect(int player) {
                         cb_append(output_buffer, "Player 1 Turn");
                         cb_write(client_socket_fd, output_buffer);
                     }
-                    else if ((game_get_current()->status == 1)) {
+                    else if ((game_get_current()->status < 2)) {
                         //printf("Its Player's 1 turn");
-                        cb_append(output_buffer, "Game has not begun!");
+                        cb_append(output_buffer, "Game Has Not Begun!");
                         cb_write(client_socket_fd, output_buffer);
                     }
 
                     else {
                         n1 = atoi(arg1);
                         n2 = atoi(arg2);
+                        char_buff *firem = cb_create(2000);
                         int f = game_fire(game_get_current(), player, n1, n2);
                         if (f == 0) {
+                            if(player == 0)
+                            {
+                                cb_append(firem, "Player 0 fires at ");
+                                cb_append(firem, arg1);
+                                cb_append(firem, " ");
+                                cb_append(firem, arg2);
+                                cb_append(firem, " - MISS\n");
+                            }
+                            if (player == 1)
+                            {
+                                cb_append(firem, "Player 1 fires at ");
+                                cb_append(firem, arg1);
+                                cb_append(firem, " ");
+                                cb_append(firem, arg2);
+                                cb_append(firem, " - MISS\n");
+                            }
                             cb_append(output_buffer, "\nMISS\n");
                             cb_write(client_socket_fd, output_buffer);
                         } else if (f == 1) {
+                            if(player == 0)
+                            {
+                                cb_append(firem, "Player 0 fires at ");
+                                cb_append(firem, arg1);
+                                cb_append(firem, " ");
+                                cb_append(firem, arg2);
+                                cb_append(firem, " - HIT\n");
+                            }
+                            if (player == 1)
+                            {
+                                cb_append(firem, "Player 1 fires at ");
+                                cb_append(firem, arg1);
+                                cb_append(firem, " ");
+                                cb_append(firem, arg2);
+                                cb_append(firem, " - HIT\n");
+                            }
                             cb_append(output_buffer, "\nHIT\n");
                             cb_write(client_socket_fd, output_buffer);
                         }
@@ -231,6 +280,7 @@ int handle_client_connect(int player) {
                         }
                         cb_append(p, n);
                         cb_append(p, " ");
+                        cb_append(p, "\n");
                         server_broadcast(p);
                     }
                 }
