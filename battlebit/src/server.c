@@ -136,6 +136,10 @@ int handle_client_connect(int player) {
                 else if (strcmp(command, "show") == 0){
                    repl_print_board(game_get_current(), player,  output_buffer);
                    cb_write(client_socket_fd, output_buffer);
+
+                    cb_reset(output_buffer);
+                    cb_append(output_buffer, "\nbattleBit (? for hekp) > ");
+                    cb_write(client_socket_fd, output_buffer);
                 }
                 else if (strcmp(command, "load") == 0){
                     char* arg1 = cb_next_token(input_buffer);
@@ -157,6 +161,9 @@ int handle_client_connect(int player) {
                             cb_write(client_socket_fd, output_buffer);
                         }
                     }
+                    cb_reset(output_buffer);
+                    cb_append(output_buffer, "\nbattleBit (? for hekp) > ");
+                    cb_write(client_socket_fd, output_buffer);
                 }
                 else if (strcmp(command, "fire") == 0) {
                     char* arg1 = cb_next_token(input_buffer);
@@ -222,7 +229,7 @@ int handle_client_connect(int player) {
                                 server_broadcast(firem);
                             }
                         }
-                        printf("status after: %d\n", game_get_current()->status);
+                        //printf("status after: %d\n", game_get_current()->status);
                         cb_reset(firem);
                         if (game_get_current()->status == 4)
                         {
@@ -235,19 +242,26 @@ int handle_client_connect(int player) {
                             server_broadcast(firem);
                         }
                     }
+                    cb_reset(output_buffer);
+                    cb_append(output_buffer, "\nbattleBit (? for hekp) > ");
+                    cb_write(client_socket_fd, output_buffer);
                 }
                 else if (strcmp(command, "say") == 0){
                    char *string = input_buffer->buffer;
                     cb_append(p, "\n");
                     char *n = "";
                     if (player == 1){
+                        //printf("Player 1 says: ");
                         cb_append(p, "Player 1 says: ");
                     }
                     else if (player == 0)
                     {
+                        //printf("Player 0 says: ");
                         cb_append(p, "Player 0 says: ");
                     }
                     char *test = cb_next_token(input_buffer);
+                    //printf("%s", test);
+
                     //while (cb_next_token(input_buffer) != NULL)
                     //while ((input_buffer->buffer != NULL) && (input_buffer->buffer[0] == "\0"))
                     //while(&input_buffer->buffer[0] != '\0')
@@ -257,8 +271,15 @@ int handle_client_connect(int player) {
                         cb_append(p, " ");
                         test = cb_next_token(input_buffer);
                    }
+                    printf("%s", test);
                     cb_append(p, "\n");
                     server_broadcast(p);
+
+                    cb_print(p);
+
+                    cb_reset(output_buffer);
+                    cb_append(output_buffer, "\nbattleBit (? for hekp) > ");
+                    cb_write(client_socket_fd, output_buffer);
                 }
                 else if (command != NULL){
                     cb_append(output_buffer, "Command was :");
@@ -272,8 +293,8 @@ int handle_client_connect(int player) {
                     cb_write(client_socket_fd, output_buffer);
                 }
                 cb_reset(output_buffer);
-                cb_append(output_buffer, "\nbattleBit (? for hekp) > ");
-                cb_write(client_socket_fd, output_buffer);
+               // cb_append(output_buffer, "\nbattleBit (? for hekp) > ");
+                //cb_write(client_socket_fd, output_buffer);
             }
         }
 }
