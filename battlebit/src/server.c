@@ -290,7 +290,7 @@ int run_server() {
 
         struct sockaddr_in client;
         socklen_t size_from_connect;
-        int client_socket_fd;er stuff
+        int client_socket_fd;
         int player = 0;
         printf("%1d\n", player);
         while ((client_socket_fd = accept(server_socket_fd,
