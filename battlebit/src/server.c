@@ -240,6 +240,7 @@ void server_broadcast(char_buff *msg) {
    // char_buff *m = cb_create(2000);
    // cb_append(m, msg->buffer);
   //  cb_append(m, msg->buffer);
+  // cb
     cb_write(SERVER->player_sockets[0], msg);
     cb_write(SERVER->player_sockets[1], msg);
     printf("1%s", msg->buffer);
@@ -307,6 +308,8 @@ int run_server() {
             printf("%5d\n", player);
             if (player > 1) {
                 break;
+
+
             }
         }
     }
