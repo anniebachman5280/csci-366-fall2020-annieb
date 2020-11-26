@@ -43,6 +43,18 @@ int game_fire(game *game, int player, int x, int y) {
     //  If the opponents ships value is 0, they have no remaining ships, and you should set the game state to
     //  PLAYER_1_WINS or PLAYER_2_WINS depending on who won.
 
+    if (game->status == PLAYER_1_TURN)
+    {
+        printf("its player 1 turn");
+    }
+    else if (game->status = PLAYER_0_TURN)
+    {
+        printf("its player 0 turn");
+    }
+    else
+    {
+        printf("game not ready");
+    }
 
     // set otherplayer to be 0 or 1 depending on what player is
     int otherPlayer;
@@ -476,11 +488,11 @@ int game_load_board(struct game *game, int player, char * spec) {
         }
 
     }
-    if (player == 1)
+/*    if (player == 1)
     {
         game->status = PLAYER_0_TURN;
     }
-    return 1;
+    return 1;*/
 
 
     // if it is valid, you should write the corresponding unsigned

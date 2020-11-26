@@ -82,6 +82,7 @@ int handle_client_connect(int player) {
 
                 char *command = cb_tokenize(input_buffer, " \r\n");
                 char* arg1 = cb_next_token(input_buffer);
+                char* arg2 = cb_next_token(input_buffer);
                 int n1;
                 int n2;
                 int n3;
@@ -161,11 +162,10 @@ int handle_client_connect(int player) {
                     //repl_print_ships();
                 }
                 else if (strcmp(command, "fire") == 0){
-                    //game_get_current()->players[1].ships;
-/*                    n1 = atoi(arg1);
-                    n2= atoi(arg2);
-                    n3= atoi(arg3);
-                    int f = game_fire(game_get_current(), otherPlayer, n1, n2);
+
+                n1 = atoi(arg1);
+                n2 = atoi(arg2);
+                int f = game_fire(game_get_current(), player, n1,n2);
                     if (f == 0){
                         cb_append(output_buffer, "\nMISS\n");
                         cb_write(client_socket_fd, output_buffer);
@@ -174,7 +174,10 @@ int handle_client_connect(int player) {
                     {
                         cb_append(output_buffer, "\nHIT\n");
                         cb_write(client_socket_fd, output_buffer);
-                    }*/
+                    }
+                game *pGame = game_get_current();
+                printf("%u", pGame->status);
+                printf("%u", game_get_current()->status);
 
                 }
                 else if (strcmp(command, "say") == 0){
@@ -238,7 +241,7 @@ void server_broadcast(char_buff *msg) {
      //   cb_write(SERVER->player_sockets[i], msg);
    // }
    // char_buff *m = cb_create(2000);
-   // cb_append(m, msg->buffer);
+      // cb_append(m, msg->buffer);
   //  cb_append(m, msg->buffer);
   // cb
     cb_write(SERVER->player_sockets[0], msg);
