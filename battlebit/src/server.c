@@ -107,6 +107,12 @@ int handle_client_connect(int player) {
                     cb_append(output_buffer, "you are player not 1 or 0\n");
                     cb_write(client_socket_fd, output_buffer);
                 }
+                if (game_get_current()->status == 2){
+                    printf("Its Player's 0 turn\n");
+                }
+                else if (game_get_current()->status == 3){
+                    printf("Its Player's 1 turn\n");
+                }
 
                 if(strcmp(command, "help") == 0)
                 {
@@ -161,24 +167,28 @@ int handle_client_connect(int player) {
                     game_load_board(game_get_current(), player, arg1);
                     //repl_print_ships();
                 }
-                else if (strcmp(command, "fire") == 0){
+                else if (strcmp(command, "fire") == 0) {
+                    //game *pGame = game_get_current();
+                    //printf("\nstatus: %u\n", pGame->status);
+                    printf("status before: %d\n", game_get_current()->status);
+                    if ((player == 1) && (game_get_current()->status == 2)) {
+                        printf("Its Player's 0 turn");
 
-                n1 = atoi(arg1);
-                n2 = atoi(arg2);
-                int f = game_fire(game_get_current(), player, n1,n2);
-                    if (f == 0){
-                        cb_append(output_buffer, "\nMISS\n");
-                        cb_write(client_socket_fd, output_buffer);
+                    } else if ((player == 0) && (game_get_current()->status == 3)) {
+                        printf("Its Player's 1 turn");
+                    } else {
+                        n1 = atoi(arg1);
+                        n2 = atoi(arg2);
+                        int f = game_fire(game_get_current(), player, n1, n2);
+                        if (f == 0) {
+                            cb_append(output_buffer, "\nMISS\n");
+                            cb_write(client_socket_fd, output_buffer);
+                        } else if (f == 1) {
+                            cb_append(output_buffer, "\nHIT\n");
+                            cb_write(client_socket_fd, output_buffer);
+                        }
+                        printf("status after: %d\n", game_get_current()->status);
                     }
-                    else if (f == 1)
-                    {
-                        cb_append(output_buffer, "\nHIT\n");
-                        cb_write(client_socket_fd, output_buffer);
-                    }
-                game *pGame = game_get_current();
-                printf("%u", pGame->status);
-                printf("%u", game_get_current()->status);
-
                 }
                 else if (strcmp(command, "say") == 0){
                    char *string = input_buffer->buffer;
