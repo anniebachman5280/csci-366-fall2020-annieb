@@ -83,10 +83,10 @@ int handle_client_connect(int player) {
                 //printf("\n\n1\n%s", input_buffer->buffer);
 
                 char *command = cb_tokenize(input_buffer, " \r\n");
-                char* arg1 = cb_next_token(input_buffer);
-                char* arg2 = cb_next_token(input_buffer);
-                int n1;
-                int n2;
+//                char* arg1 = cb_next_token(input_buffer);
+//                char* arg2 = cb_next_token(input_buffer);
+//                int n1;
+//                int n2;
 
                 //printf("\no\n%s", command);
                 if (player == 0)
@@ -103,13 +103,13 @@ int handle_client_connect(int player) {
                 }
                 if (game_get_current()->status == 2){
                     //printf("Its Player's 0 turn\n");
-                    cb_append(output_buffer, "Its player 0 turn\n");
-                    cb_write(client_socket_fd, output_buffer);
+                   // cb_append(output_buffer, "Its player 0 turn\n");
+                   // cb_write(client_socket_fd, output_buffer);
                 }
                 else if (game_get_current()->status == 3){
                    // printf("Its Player's 1 turn\n");
-                    cb_append(output_buffer, "Its player 1 turn\n");
-                    cb_write(client_socket_fd, output_buffer);
+                    //cb_append(output_buffer, "Its player 1 turn\n");
+                    //cb_write(client_socket_fd, output_buffer);
                 }
                 else if (game_get_current()->status == 4){
                   //  printf("Player 0 win\n");
@@ -167,6 +167,10 @@ int handle_client_connect(int player) {
                 }
                 else if (strcmp(command, "load") == 0){
                     //game_get_current()->players[1].ships;
+                    char* arg1 = cb_next_token(input_buffer);
+                    //char* arg2 = cb_next_token(input_buffer);
+                    //int n1;
+                    //int n2;
                     if ((game_get_current()->status > 1)) {
                         //printf("Its Player's 1 turn");
                         cb_append(output_buffer, "Already Loaded Board");
@@ -196,6 +200,10 @@ int handle_client_connect(int player) {
                     //game *pGame = game_get_current();
                     //printf("\nstatus: %u\n", pGame->status);
                     //printf("status before: %d\n", game_get_current()->status);
+                    char* arg1 = cb_next_token(input_buffer);
+                    char* arg2 = cb_next_token(input_buffer);
+                    int n1;
+                    int n2;
                     if ((player == 1) && (game_get_current()->status == 2)) {
                         //printf("Its Player's 0 turn");
                         cb_append(output_buffer, "Player 0 Turn");
@@ -264,24 +272,26 @@ int handle_client_connect(int player) {
                 }
                 else if (strcmp(command, "say") == 0){
                    char *string = input_buffer->buffer;
-
                     cb_append(p, "\n");
+                    char *n = "";
+                    if (player == 1){
+                        cb_append(p, "Player 1 says: ");
+                    }
+                    else if (player == 0)
+                    {
+                        cb_append(p, "Player 0 says: ");
+                    }
                     while (cb_next_token(input_buffer) != NULL)
                     {
                         printf("done");
-                        char *n = cb_next_token(input_buffer);
-                        if (player == 1){
-                            cb_append(p, "Player 1 says: ");
-                        }
-                        else if (player == 0)
-                        {
-                            cb_append(p, "Player 0 says: ");
-                        }
+                        n = cb_next_token(input_buffer);
                         cb_append(p, n);
                         cb_append(p, " ");
-                        cb_append(p, "\n");
-                        server_broadcast(p);
+
+                        //server_broadcast(p);
                     }
+                    cb_append(p, "\n");
+                    server_broadcast(p);
                 }
                 else if (command != NULL){
                     cb_append(output_buffer, "Command was :");
@@ -360,24 +370,25 @@ int run_server() {
 
         //Accept an incoming connection
         puts("Waiting for incoming connections...");
+        //puts("battleBit (? for help) > ");
 
         struct sockaddr_in client;
         socklen_t size_from_connect;
         int client_socket_fd;
         int player = 0;
-        printf("%1d\n", player);
+        //printf("%1d\n", player);
         while ((client_socket_fd = accept(server_socket_fd,
                                           (struct sockaddr *) &client,
                                           &size_from_connect)) > 0) {
-            printf("%2d\n", player);
+           // printf("%2d\n", player);
             SERVER->player_sockets[player] = client_socket_fd;
             pthread_create(&SERVER->player_threads[player], NULL,  handle_client_connect, player);
-            printf("%3d\n", player);
+            //printf("%3d\n", player);
             player++;
-            printf("%4d\n", player);
+            //printf("%4d\n", player);
             //SERVER->player_sockets[player] = client_socket_fd;
            // pthread_create(&SERVER->player_threads, NULL, handle_client_connect, player);
-            printf("%5d\n", player);
+           // printf("%5d\n", player);
             if (player > 1) {
                 break;
 
@@ -389,7 +400,6 @@ int run_server() {
 int server_start() {
     // STEP 7 - using a pthread, run the run_server() function asynchronously, so you can still
     // interact with the game via the command line REPL
-
     init_server();
     pthread_create(&SERVER->server_thread, NULL, (void *) run_server, NULL);
 }

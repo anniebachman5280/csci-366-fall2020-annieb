@@ -48,10 +48,10 @@ void repl_execute_command(struct char_buff * buffer) {
         int n1;
         int n2;
         int n3;
-        printf("1%s\n", arg1);
-        printf("2%s\n", arg2);
-        printf("3%s\n", arg3);
-        printf("p%d\n", n1);
+      //  printf("1%s\n", arg1);
+       // printf("2%s\n", arg2);
+      //  printf("3%s\n", arg3);
+       // printf("p%d\n", n1);
        // printf("p%d\n", n2);
       //  printf("p%d\n", n3);
         if (strcmp(command, "exit") == 0) {
@@ -68,6 +68,7 @@ void repl_execute_command(struct char_buff * buffer) {
             printf("exit - quit the server\n");
         } else if(strcmp(command, "server") == 0) {
             server_start();
+            //printf("battleBit (? for help) > ");
         } else if(strcmp(command, "show") == 0) {
 
             // work with repl_print_board
@@ -93,11 +94,11 @@ void repl_execute_command(struct char_buff * buffer) {
             n3 = atoi(arg3);
           int f = game_fire(game_get_current(), n1, n2, n3);
           if (f == 0){
-              printf("\nMISS\n");
+            //  printf("\nMISS\n");
           }
           else if (f == 1)
           {
-              printf("\nHIT\n");
+              //printf("\nHIT\n");
           }
 
         } else if (strcmp(command, "nasm") == 0) {
@@ -108,6 +109,7 @@ void repl_execute_command(struct char_buff * buffer) {
         } else {
             printf("Unknown Command: %s\n", command);
         }
+
     }
 }
 
