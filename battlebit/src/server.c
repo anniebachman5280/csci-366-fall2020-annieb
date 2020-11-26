@@ -40,7 +40,6 @@ int handle_client_connect(int player) {
     // be working against network sockets rather than standard out, and you will need
     // to coordinate turns via the game::status field.
 
-    printf("\nplayer %d\n", player);
     int otherPlayer;
     if (player == 1)
     {
@@ -53,10 +52,6 @@ int handle_client_connect(int player) {
     else{
         printf("player error");
     }
-
-
-    printf("Otherplayer %d\n", otherPlayer);
-
 
         int client_socket_fd = SERVER->player_sockets[player];
         char raw_buffer[2000];
@@ -85,7 +80,7 @@ int handle_client_connect(int player) {
 
                 cb_append(input_buffer, raw_buffer);
 
-                printf("\n\n1\n%s", input_buffer->buffer);
+                //printf("\n\n1\n%s", input_buffer->buffer);
 
                 char *command = cb_tokenize(input_buffer, " \r\n");
                 char* arg1 = cb_next_token(input_buffer);
@@ -180,17 +175,17 @@ int handle_client_connect(int player) {
                     else {
                         //n1 = atoi(arg1);
                         if (player == 0) {
-                            cb_append(output_buffer, arg1);
-                            cb_write(client_socket_fd, output_buffer);
+                            //cb_append(output_buffer, arg1);
+                            //cb_write(client_socket_fd, output_buffer);
                             game_load_board(game_get_current(), player, arg1);
                             cb_append(output_buffer, "Waiting On Player 1");
                             cb_write(client_socket_fd, output_buffer);
                         }
                         else if (player == 1){
-                            cb_append(output_buffer, arg1);
-                            cb_write(client_socket_fd, output_buffer);
+                          //  cb_append(output_buffer, arg1);
+                          //  cb_write(client_socket_fd, output_buffer);
                             game_load_board(game_get_current(), player, arg1);
-                            cb_append(output_buffer, "All Player Boards Loaded");
+                            cb_append(output_buffer, "All Player Boards Loaded\n");
                             cb_append(output_buffer, "Player 0 Turn");
                             cb_write(client_socket_fd, output_buffer);
                         }
@@ -229,6 +224,7 @@ int handle_client_connect(int player) {
                                 cb_append(firem, " ");
                                 cb_append(firem, arg2);
                                 cb_append(firem, " - MISS\n");
+                                server_broadcast(firem);
                             }
                             if (player == 1)
                             {
@@ -237,9 +233,10 @@ int handle_client_connect(int player) {
                                 cb_append(firem, " ");
                                 cb_append(firem, arg2);
                                 cb_append(firem, " - MISS\n");
+                                server_broadcast(firem);
                             }
-                            cb_append(output_buffer, "\nMISS\n");
-                            cb_write(client_socket_fd, output_buffer);
+                           // cb_append(output_buffer, "\nMISS\n");
+                            //cb_write(client_socket_fd, output_buffer);
                         } else if (f == 1) {
                             if(player == 0)
                             {
@@ -248,6 +245,7 @@ int handle_client_connect(int player) {
                                 cb_append(firem, " ");
                                 cb_append(firem, arg2);
                                 cb_append(firem, " - HIT\n");
+                                server_broadcast(firem);
                             }
                             if (player == 1)
                             {
@@ -256,9 +254,10 @@ int handle_client_connect(int player) {
                                 cb_append(firem, " ");
                                 cb_append(firem, arg2);
                                 cb_append(firem, " - HIT\n");
+                                server_broadcast(firem);
                             }
-                            cb_append(output_buffer, "\nHIT\n");
-                            cb_write(client_socket_fd, output_buffer);
+                           // cb_append(output_buffer, "\nHIT\n");
+                           // cb_write(client_socket_fd, output_buffer);
                         }
                         printf("status after: %d\n", game_get_current()->status);
                     }

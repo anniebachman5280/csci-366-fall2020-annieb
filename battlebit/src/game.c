@@ -45,15 +45,15 @@ int game_fire(game *game, int player, int x, int y) {
 
     if (game->status == PLAYER_1_TURN)
     {
-        printf("its player 1 turn");
+      //  printf("its player 1 turn");
     }
     else if (game->status = PLAYER_0_TURN)
     {
-        printf("its player 0 turn");
+     //   printf("its player 0 turn");
     }
     else
     {
-        printf("game not ready");
+      //  printf("game not ready");
     }
 
     // set otherplayer to be 0 or 1 depending on what player is
