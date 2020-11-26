@@ -38,8 +38,6 @@ struct char_buff * repl_read_command(char * prompt) {
 void repl_execute_command(struct char_buff * buffer) {
     char* command = cb_tokenize(buffer, " \n");
 
-    //struct game * g = game_get_current();
-  //  game *gameon = game_get_current();
     char_buff *n = cb_create(2000);
     if (command) {
         char* arg1 = cb_next_token(buffer);
@@ -48,12 +46,7 @@ void repl_execute_command(struct char_buff * buffer) {
         int n1;
         int n2;
         int n3;
-      //  printf("1%s\n", arg1);
-       // printf("2%s\n", arg2);
-      //  printf("3%s\n", arg3);
-       // printf("p%d\n", n1);
-       // printf("p%d\n", n2);
-      //  printf("p%d\n", n3);
+
         if (strcmp(command, "exit") == 0) {
             printf("goodbye!");
             exit(EXIT_SUCCESS);

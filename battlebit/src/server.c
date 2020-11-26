@@ -81,16 +81,8 @@ int handle_client_connect(int player) {
 
                 cb_append(input_buffer, raw_buffer);
 
-                //cb_append(saybuff, raw_buffer);
-                //printf("\n\n1\n%s", input_buffer->buffer);
-
                 char *command = cb_tokenize(input_buffer, " \r\n");
-//                char* arg1 = cb_next_token(input_buffer);
-//                char* arg2 = cb_next_token(input_buffer);
-//                int n1;
-//                int n2;
 
-                //printf("\no\n%s", command);
                 if (player == 0)
                 {
                     //printf("%d", player);
@@ -220,12 +212,12 @@ int handle_client_connect(int player) {
                         cb_append(output_buffer, "Game Has Not Begun!");
                         cb_write(client_socket_fd, output_buffer);
                     }
-
                     else {
                         n1 = atoi(arg1);
                         n2 = atoi(arg2);
                         char_buff *firem = cb_create(2000);
                         int f = game_fire(game_get_current(), player, n1, n2);
+                        cb_append(firem, "\n");
                         if (f == 0) {
                             if(player == 0)
                             {
@@ -266,10 +258,20 @@ int handle_client_connect(int player) {
                                 cb_append(firem, " - HIT\n");
                                 server_broadcast(firem);
                             }
-                           // cb_append(output_buffer, "\nHIT\n");
-                           // cb_write(client_socket_fd, output_buffer);
                         }
                         printf("status after: %d\n", game_get_current()->status);
+                        cb_reset(firem);
+                        if (game_get_current()->status == 4)
+                        {
+
+                            cb_append(firem, "PLAYER 0 WINS!");
+                            server_broadcast(firem);
+
+                        } else if (game_get_current()->status == 5)
+                        {
+                            cb_append(firem, "PLAYER 1 WINS!");
+                            server_broadcast(firem);
+                        }
                     }
                 }
                 else if (strcmp(command, "say") == 0){
@@ -289,13 +291,7 @@ int handle_client_connect(int player) {
                     //while(&input_buffer->buffer[0] != '\0')
                     while (test != NULL)
                    {
-                  //  printf("here%ld \n", input_buffer->size);
-                   // printf("here%lu \n", input_buffer->size);
-                    //printf(sizeof(input_buffer->buffer));
-                        printf("done");
-                        //n = cb_next_token(input_buffer);
-                        //n = cb_next_token(saybuff);
-
+                        //printf("done");
                         cb_append(p, test);
                         cb_append(p, " ");
                         test = cb_next_token(input_buffer);
@@ -307,7 +303,6 @@ int handle_client_connect(int player) {
                 else if (command != NULL){
                     cb_append(output_buffer, "Command was :");
                     cb_append(output_buffer, command);
-
                     cb_write(client_socket_fd, output_buffer);
                 }
                 else
@@ -321,22 +316,12 @@ int handle_client_connect(int player) {
                 cb_write(client_socket_fd, output_buffer);
             }
         }
-
 }
 
 void server_broadcast(char_buff *msg) {
-    // send message to all players
- //   for (int i =0; i < 1; ++i){
-        //SERVER->player_sockets[i];
-     //   cb_write(SERVER->player_sockets[i], msg);
-   // }
-   // char_buff *m = cb_create(2000);
-      // cb_append(m, msg->buffer);
-  //  cb_append(m, msg->buffer);
-  // cb
     cb_write(SERVER->player_sockets[0], msg);
     cb_write(SERVER->player_sockets[1], msg);
-    printf("1%s", msg->buffer);
+    //printf("1%s", msg->buffer);
 }
 
 int run_server() {
@@ -391,18 +376,11 @@ int run_server() {
         while ((client_socket_fd = accept(server_socket_fd,
                                           (struct sockaddr *) &client,
                                           &size_from_connect)) > 0) {
-           // printf("%2d\n", player);
             SERVER->player_sockets[player] = client_socket_fd;
             pthread_create(&SERVER->player_threads[player], NULL,  handle_client_connect, player);
-            //printf("%3d\n", player);
             player++;
-            //printf("%4d\n", player);
-            //SERVER->player_sockets[player] = client_socket_fd;
-           // pthread_create(&SERVER->player_threads, NULL, handle_client_connect, player);
-           // printf("%5d\n", player);
             if (player > 1) {
                 break;
-
             }
         }
     }
