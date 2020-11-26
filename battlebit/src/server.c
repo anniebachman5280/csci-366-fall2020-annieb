@@ -59,6 +59,7 @@ int handle_client_connect(int player) {
         char_buff *output_buffer = cb_create(2000);
 
         char_buff *p = cb_create(2000);
+        char_buff *saybuff = cb_create(2000);
 
         int read_size;
         if (player == 0) {
@@ -80,6 +81,7 @@ int handle_client_connect(int player) {
 
                 cb_append(input_buffer, raw_buffer);
 
+                //cb_append(saybuff, raw_buffer);
                 //printf("\n\n1\n%s", input_buffer->buffer);
 
                 char *command = cb_tokenize(input_buffer, " \r\n");
@@ -281,15 +283,24 @@ int handle_client_connect(int player) {
                     {
                         cb_append(p, "Player 0 says: ");
                     }
-                    while (cb_next_token(input_buffer) != NULL)
-                    {
+                    char *test = cb_next_token(input_buffer);
+                    //while (cb_next_token(input_buffer) != NULL)
+                    //while ((input_buffer->buffer != NULL) && (input_buffer->buffer[0] == "\0"))
+                    //while(&input_buffer->buffer[0] != '\0')
+                    while (test != NULL)
+                   {
+                  //  printf("here%ld \n", input_buffer->size);
+                   // printf("here%lu \n", input_buffer->size);
+                    //printf(sizeof(input_buffer->buffer));
                         printf("done");
-                        n = cb_next_token(input_buffer);
-                        cb_append(p, n);
-                        cb_append(p, " ");
+                        //n = cb_next_token(input_buffer);
+                        //n = cb_next_token(saybuff);
 
+                        cb_append(p, test);
+                        cb_append(p, " ");
+                        test = cb_next_token(input_buffer);
                         //server_broadcast(p);
-                    }
+                   }
                     cb_append(p, "\n");
                     server_broadcast(p);
                 }
