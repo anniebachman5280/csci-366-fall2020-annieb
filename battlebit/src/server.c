@@ -40,36 +40,27 @@ int handle_client_connect(int player) {
     // be working against network sockets rather than standard out, and you will need
     // to coordinate turns via the game::status field.
 
-    int otherPlayer;
-    if (player == 1)
-    {
-        otherPlayer = 0;
-    }
-    else if (player == 0)
-    {
-        otherPlayer = 1;
-    }
-    else{
-        printf("player error");
-    }
-
         int client_socket_fd = SERVER->player_sockets[player];
         char raw_buffer[2000];
+
         char_buff *input_buffer = cb_create(2000);
         char_buff *output_buffer = cb_create(2000);
 
         char_buff *p = cb_create(2000);
-        char_buff *saybuff = cb_create(2000);
 
         int read_size;
+
+        // Intro for player 0
         if (player == 0) {
             cb_append(output_buffer, "Welcome to the battleBit server Player 0 \n");
             cb_append(output_buffer, "battleBit (? for help) > ");
         }
+        // Intro for player 1
         else if (player == 1) {
         cb_append(output_buffer, "Welcome to the battleBit server Player 1 \n");
         cb_append(output_buffer, "battleBit (? for help) > ");
-    }
+        }
+        // write welcome message
         cb_write(client_socket_fd, output_buffer);
 
         while((read_size = recv(client_socket_fd, raw_buffer, 2000, 0)) > 0)
@@ -83,6 +74,7 @@ int handle_client_connect(int player) {
 
                 char *command = cb_tokenize(input_buffer, " \r\n");
 
+                // help message
                 if(strcmp(command, "help") == 0)
                 {
                     cb_append(output_buffer, "? - show help\n");
@@ -94,6 +86,7 @@ int handle_client_connect(int player) {
 
                     cb_write(client_socket_fd, output_buffer);
                 }
+                // same help message for ? input
                 else if(strcmp(command, "?") == 0)
                 {
                     cb_append(output_buffer, "? - show help\n");
@@ -105,33 +98,45 @@ int handle_client_connect(int player) {
 
                     cb_write(client_socket_fd, output_buffer);
                 }
+                // end
                 else if (strcmp(command, "quit") == 0){
                     close(client_socket_fd);
                 }
+                // end
                 else if (strcmp(command, "exit") == 0){
                     close(client_socket_fd);
                 }
+                // show
                 else if (strcmp(command, "show") == 0){
-                   repl_print_board(game_get_current(), player,  output_buffer);
-                   cb_write(client_socket_fd, output_buffer);
+                    // print baord and write to socket
+                    repl_print_board(game_get_current(), player,  output_buffer);
+                    cb_write(client_socket_fd, output_buffer);
 
+                    // reset output and give prompt
                     cb_reset(output_buffer);
                     cb_append(output_buffer, "\nbattleBit (? for hekp) > ");
                     cb_write(client_socket_fd, output_buffer);
                 }
+                // load board
                 else if (strcmp(command, "load") == 0){
+                    // input string of board spec
                     char* arg1 = cb_next_token(input_buffer);
 
+                    // if the status is on a turn or winning, do not allow players to load a board
                     if ((game_get_current()->status > 1)) {
                         cb_append(output_buffer, "Already Loaded Board");
                         cb_write(client_socket_fd, output_buffer);
                     }
+                    // status is on init steps adn ready for board loading
                     else {
+                        // player 0 must enter board first, print message once player 0 has loaded board
                         if (player == 0) {
                             game_load_board(game_get_current(), player, arg1);
                             cb_append(output_buffer, "Waiting On Player 1");
                             cb_write(client_socket_fd, output_buffer);
                         }
+                        // if player 1 is loading, pplayer 0 has loaded the board, boards are loaded,
+                        // print messgae adn player 0 turn to go
                         else if (player == 1){
                             game_load_board(game_get_current(), player, arg1);
                             cb_append(output_buffer, "All Player Boards Loaded\n");
@@ -139,35 +144,48 @@ int handle_client_connect(int player) {
                             cb_write(client_socket_fd, output_buffer);
                         }
                     }
+                    // reset output and give prompt
                     cb_reset(output_buffer);
                     cb_append(output_buffer, "\nbattleBit (? for hekp) > ");
                     cb_write(client_socket_fd, output_buffer);
                 }
+                // fire
                 else if (strcmp(command, "fire") == 0) {
+                    // two input args for the x, y to fire at, must make into ints
                     char* arg1 = cb_next_token(input_buffer);
                     char* arg2 = cb_next_token(input_buffer);
                     int n1;
                     int n2;
+
+                    // if for player firing out of order
                     if ((player == 1) && (game_get_current()->status == 2)) {
-                        //printf("Its Player's 0 turn");
                         cb_append(output_buffer, "Player 0 Turn");
                         cb_write(client_socket_fd, output_buffer);
-                    } else if ((player == 0) && (game_get_current()->status == 3)) {
-                        //printf("Its Player's 1 turn");
+                    }
+                    // player firing out of order
+                    else if ((player == 0) && (game_get_current()->status == 3)) {
                         cb_append(output_buffer, "Player 1 Turn");
                         cb_write(client_socket_fd, output_buffer);
                     }
+                    // game not started yet if init statuss
                     else if ((game_get_current()->status < 2)) {
-                        //printf("Its Player's 1 turn");
                         cb_append(output_buffer, "Game Has Not Begun!");
                         cb_write(client_socket_fd, output_buffer);
                     }
+                    // ready for player firing
                     else {
+                        // two args into ints
                         n1 = atoi(arg1);
                         n2 = atoi(arg2);
+
+                        // fire message buff
                         char_buff *firem = cb_create(2000);
+
+                        // game fire, save int result of hit or miss
                         int f = game_fire(game_get_current(), player, n1, n2);
                         cb_append(firem, "\n");
+
+                        // f 0 is a miss, print who fired at what for each playe rusing server boardcast
                         if (f == 0) {
                             if(player == 0)
                             {
@@ -187,7 +205,9 @@ int handle_client_connect(int player) {
                                 cb_append(firem, " - MISS\n");
                                 server_broadcast(firem);
                             }
-                        } else if (f == 1) {
+                        }
+                        // f 1 is a hit, print who fired at what for each playe rusing server boardcast
+                        else if (f == 1) {
                             if(player == 0)
                             {
                                 cb_append(firem, "Player 0 fires at ");
@@ -208,34 +228,43 @@ int handle_client_connect(int player) {
                             }
                         }
                         cb_reset(firem);
+
+                        // winner 0
                         if (game_get_current()->status == 4)
                         {
                             cb_append(firem, "PLAYER 0 WINS!");
                             server_broadcast(firem);
                             puts(" ");
 
-                        } else if (game_get_current()->status == 5)
+                        }
+                        // winner 1
+                        else if (game_get_current()->status == 5)
                         {
                             cb_append(firem, "PLAYER 1 WINS!");
                             server_broadcast(firem);
                         }
                     }
+                    // reset output and give prompt
                     cb_reset(output_buffer);
                     cb_append(output_buffer, "\nbattleBit (? for hekp) > ");
                     cb_write(client_socket_fd, output_buffer);
                 }
+                // say
                 else if (strcmp(command, "say") == 0){
-                   char *string = input_buffer->buffer;
                     cb_append(p, "\n");
-                    char *n = "";
+                    // player says line
                     if (player == 1){
                         cb_append(p, "Player 1 says: ");
                     }
+                    // player says line
                     else if (player == 0)
                     {
                         cb_append(p, "Player 0 says: ");
                     }
                     char *test = cb_next_token(input_buffer);
+
+                    // while the input buffer is not empty, keep appending and sending message
+                    // p is delared as a c buff at the top
                     while (test != NULL)
                    {
                         cb_append(p, test);
@@ -243,10 +272,13 @@ int handle_client_connect(int player) {
                         test = cb_next_token(input_buffer);
                    }
                     cb_append(p, "\n");
+
+                    // broadcast the messsage to all players adn print on main term
                     server_broadcast(p);
 
                     cb_reset(p);
 
+                    // reset output and give prompt
                     cb_reset(output_buffer);
                     cb_append(output_buffer, "\nbattleBit (? for hekp) > ");
                     cb_write(client_socket_fd, output_buffer);
@@ -269,8 +301,11 @@ int handle_client_connect(int player) {
 }
 
 void server_broadcast(char_buff *msg) {
+    // wirte to each player socket
     cb_write(SERVER->player_sockets[0], msg);
     cb_write(SERVER->player_sockets[1], msg);
+
+    // print to main terminal
     printf("%s", msg->buffer);
 }
 
@@ -326,9 +361,14 @@ int run_server() {
         while ((client_socket_fd = accept(server_socket_fd,
                                           (struct sockaddr *) &client,
                                           &size_from_connect)) > 0) {
+
+            // create socket for each player
             SERVER->player_sockets[player] = client_socket_fd;
+            // create pthread
             pthread_create(&SERVER->player_threads[player], NULL,  handle_client_connect, player);
+            // inc player
             player++;
+            // only allow two players to connect
             if (player > 1) {
                 break;
             }
@@ -339,6 +379,8 @@ int run_server() {
 int server_start() {
     // STEP 7 - using a pthread, run the run_server() function asynchronously, so you can still
     // interact with the game via the command line REPL
+
+    // start server and server thread
     init_server();
     pthread_create(&SERVER->server_thread, NULL, (void *) run_server, NULL);
 }

@@ -38,6 +38,7 @@ struct char_buff * repl_read_command(char * prompt) {
 void repl_execute_command(struct char_buff * buffer) {
     char* command = cb_tokenize(buffer, " \n");
 
+    // char_buff for holding strings
     char_buff *n = cb_create(2000);
     if (command) {
         char* arg1 = cb_next_token(buffer);
@@ -60,14 +61,15 @@ void repl_execute_command(struct char_buff * buffer) {
             printf("server - start the server\n");
             printf("exit - quit the server\n");
         } else if(strcmp(command, "server") == 0) {
+
             server_start();
-            //printf("battleBit (? for help) > ");
+
         } else if(strcmp(command, "show") == 0) {
 
             // work with repl_print_board
-            n1 = atoi(arg1);
-            repl_print_board(game_get_current(), n1, n);
-            cb_print(n);
+            n1 = atoi(arg1); // int for input
+            repl_print_board(game_get_current(), n1, n); // print board, send n as buff
+            cb_print(n); // print buff
 
         } else if(strcmp(command, "reset") == 0) {
 
@@ -76,19 +78,24 @@ void repl_execute_command(struct char_buff * buffer) {
         } else if (strcmp(command, "load") == 0) {
 
             // work with game_load_board
-            n1 = atoi(arg1);
-            game_load_board(game_get_current(), n1, arg2);
+            n1 = atoi(arg1); // to int
+            game_load_board(game_get_current(), n1, arg2); // load board with inputs
 
         } else if (strcmp(command, "fire") == 0) {
 
             // work with game_fire
-            n1 = atoi(arg1);
-            n2 = atoi(arg2);
-            n3 = atoi(arg3);
+            n1 = atoi(arg1); // to int
+            n2 = atoi(arg2); // to int
+            n3 = atoi(arg3); // to int
+
+          // call fire
           int f = game_fire(game_get_current(), n1, n2, n3);
+
+          // if 0, miss. could print
           if (f == 0){
             //  printf("\nMISS\n");
           }
+          // if 1, hit, could print
           else if (f == 1)
           {
               //printf("\nHIT\n");
@@ -102,7 +109,6 @@ void repl_execute_command(struct char_buff * buffer) {
         } else {
             printf("Unknown Command: %s\n", command);
         }
-
     }
 }
 
@@ -137,26 +143,22 @@ void repl_print_ships(player_info *player_info, char_buff *buffer) {
         sprintf(str, "%d", j);
         cb_append(buffer, " \n");
         cb_append(buffer, str);
+        // inner for loop
         for (int k = 0; k < 8; k++)
         {
-            //printf("Inner %d %d\n", j , k);
+            // get bit val for testing of each x,y
             test = xy_to_bitval(k,j);
-            //if ((test & player_info->ships) != 0)
+            // there is a ship if and with test and ships
             if ((test & player_info->ships) != 0)
             {
-              //  printf("\nIF: %d  %llu\n", test, player_info->ships);
                 cb_append(buffer, " *");
             }
-            //else if ((test & player_info->ships) == 0)
+            // there is no ship if and with test and ships = 0
             else if ((test & player_info->ships) == 0)
             {
-               // printf("\nELSE: %d  %llu\n", test, player_info->ships);
                 cb_append(buffer, "  ");
             }
-          //  printf("&%d\n", test & player_info->ships);
-            //cb_print(buffer);
         }
-
     }
     cb_append(buffer, " \n");
 }
@@ -184,30 +186,26 @@ void repl_print_hits(struct player_info *player_info, struct char_buff *buffer) 
         sprintf(str, "%d", j);
         cb_append(buffer, " \n");
         cb_append(buffer, str);
+        // inner for loop
         for (int k = 0; k < 8; k++)
         {
-        //    printf("Inner %d %d\n", j , k);
+            // get bit val of each x,y
             test = xy_to_bitval(k,j);
-            //if ((test & player_info->ships) != 0)
+            // if and bit val of location and shots, there is a shot
             if (((player_info->shots & test) != 0) && ((player_info->hits & test) != 0))
             {
-             //   printf("Hit");
                 cb_append(buffer, " H");
             }
-                //else if ((test & player_info->ships) == 0)
+            // if and with shots and test is -, there is a miss, but a shot
             else if (((player_info->shots & test) != 0) && ((player_info->hits & test) == 0))
             {
-               // printf("miss");
                 cb_append(buffer, " M");
             }
             else
             {
                 cb_append(buffer, "  ");
             }
-            //cb_print(buffer);
         }
-
     }
     cb_append(buffer, " \n");
-
 }

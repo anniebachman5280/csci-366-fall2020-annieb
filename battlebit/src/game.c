@@ -83,15 +83,15 @@ int game_fire(game *game, int player, int x, int y) {
         // change game staatus for if a player ships is 0, no more ships left
         if(game->players[otherPlayer].ships == 0)
         {
+            // player 0 wins
             if(player == 0)
             {
                 game->status = PLAYER_0_WINS;
-                //return 1;
             }
+            // player 1 wins
             else if (player == 1)
             {
                 game->status = PLAYER_1_WINS;
-                //return 1;
             }
 
         }
@@ -115,14 +115,16 @@ int game_fire(game *game, int player, int x, int y) {
         return 0;
     }
 
-    //case for player wining game
+    //case for player wining game, checking other player this time
     if(game->players[otherPlayer].ships == 0)
     {
+        // player 1 wins
         if(player == 0)
         {
             game->status = PLAYER_1_WINS;
             return 0;
         }
+        // player 0 wins
         else if (player == 1)
         {
             game->status = PLAYER_0_WINS;
@@ -172,10 +174,6 @@ int game_load_board(struct game *game, int player, char * spec) {
     // to see if it is a valid layout (no off-the-board positions
     // and no overlapping ships)
     //
-
-
-
-    //printf("\n%s\n", spec);
 
     // cases for wrong specs
     // empty spec
@@ -256,27 +254,28 @@ int game_load_board(struct game *game, int player, char * spec) {
     player_info *player_info = &game->players[player];
 
     // vars
-    int j = 0;
-    int x;
-    int y;
-    int length;
-    int check1;
+    int j = 0; // iterator
+    int x; // x cord
+    int y; // y cord
+    int length; // length of ship
+    int check1; // check for valid, return -1 if not valid
 
     // begin for loop, checking three array index at a time checks for which letter is given, sets
     // length depending on the letter, calls the add hor/vert depending on letter case
     // also checks for off board ships
     for (int i = 0; i < 5; i++)
     {
-      //  printf("%c" ,spec[j]);
         if (spec[j] == 'C' || spec[j] == 'c')
         {
            // printf("Length = 5\n" );
             length = 5;
+            // check to see if 'c' is clready used in the spec
             if (usedL[0] == 1)
             {
                 //printf("C/c already used \n");
                 return -1;
             }
+            // else, set c to be used now
             else
             {
                 usedL[0] = 1;
@@ -284,6 +283,7 @@ int game_load_board(struct game *game, int player, char * spec) {
            // printf("+1: %d, +2: %d \n", spec[j+1]-'0', spec[j+2]-'0');
             if(spec[j] == 'C')
             {
+                // length makes ship off the board
                 if((spec[j+1]-'0') > 3)
                 {
                     return -1;
@@ -291,6 +291,7 @@ int game_load_board(struct game *game, int player, char * spec) {
             }
             else if (spec[j] == 'c')
             {
+                // length makes ship off the board
                 if((spec[j+2]-'0') > 3)
                 {
                     return -1;
@@ -300,11 +301,13 @@ int game_load_board(struct game *game, int player, char * spec) {
         else if (spec[j] == 'B' || spec[j] == 'b')
         {
             length = 4;
+            // check if b is used yet
             if (usedL[1] == 1)
             {
                 //printf("B/b already used \n");
                 return -1;
             }
+            // if not use, mark as used
             else
             {
                 usedL[1] = 1;
@@ -312,6 +315,7 @@ int game_load_board(struct game *game, int player, char * spec) {
            // printf("+1: %d, +2: %d \n", spec[j+1]-'0', spec[j+2]-'0');
             if(spec[j] == 'B')
             {
+                // length makes ship off the board
                 if((spec[j+1]-'0') > 4)
                 {
                     return -1;
@@ -319,6 +323,7 @@ int game_load_board(struct game *game, int player, char * spec) {
             }
             else if (spec[j] == 'b')
             {
+                // length makes ship off the board
                 if((spec[j+2]-'0') > 4)
                 {
                     return -1;
@@ -328,11 +333,13 @@ int game_load_board(struct game *game, int player, char * spec) {
         else if (spec[j] == 'D' || spec[j] == 'd')
         {
             length = 3;
+            // check is d is used yet
             if (usedL[2] == 1)
             {
                 //printf("D/d already used \n");
                 return -1;
             }
+            // set d to be used
             else
             {
                 usedL[2] = 1;
@@ -340,6 +347,7 @@ int game_load_board(struct game *game, int player, char * spec) {
             //printf("+1: %d, +2: %d \n", spec[j+1]-'0', spec[j+2]-'0');
             if(spec[j] == 'D')
             {
+                // length makes ship off the board
                 if((spec[j+1]-'0') > 5)
                 {
                     return -1;
@@ -347,6 +355,7 @@ int game_load_board(struct game *game, int player, char * spec) {
             }
             else if (spec[j] == 'd')
             {
+                // length makes ship off the board
                 if((spec[j+2]-'0') > 5)
                 {
                     return -1;
@@ -356,11 +365,13 @@ int game_load_board(struct game *game, int player, char * spec) {
         else if (spec[j] == 'S' || spec[j] == 's')
         {
             length = 3;
+            // check if s is used yet
             if (usedL[3] == 1)
             {
                 //printf("S/s already used \n");
                 return -1;
             }
+            // set s to be used now
             else
             {
                 usedL[3] = 1;
@@ -368,6 +379,7 @@ int game_load_board(struct game *game, int player, char * spec) {
            // printf("+1: %d, +2: %d \n", spec[j+1]-'0', spec[j+2]-'0');
             if(spec[j] == 'S')
             {
+                // length makes ship off the board
                 if((spec[j+1]-'0') > 5)
                 {
                     return -1;
@@ -375,6 +387,7 @@ int game_load_board(struct game *game, int player, char * spec) {
             }
             else if (spec[j] == 's')
             {
+                // length makes ship off the board
                 if((spec[j+2]-'0') > 5)
                 {
                     return -1;
@@ -384,11 +397,13 @@ int game_load_board(struct game *game, int player, char * spec) {
         else if (spec[j] == 'P' || spec[j] == 'p')
         {
             length = 2;
+            // chekc if p has been used yet
             if (usedL[4] == 1)
             {
                 //printf("P/p already used \n");
                 return -1;
             }
+            // set p to be used
             else
             {
                 usedL[4] = 1;
@@ -396,6 +411,7 @@ int game_load_board(struct game *game, int player, char * spec) {
            // printf("+1: %d, +2: %d \n", spec[j+1]-'0', spec[j+2]-'0');
             if(spec[j] == 'P')
             {
+                // length makes ship off the board
                 if((spec[j+1]-'0') > 6)
                 {
                     return -1;
@@ -403,71 +419,66 @@ int game_load_board(struct game *game, int player, char * spec) {
             }
             else if (spec[j] == 'p')
             {
+                // length makes ship off the board
                 if((spec[j+2]-'0') > 6)
                 {
                     return -1;
                 }
             }
         }
+        // wrong spec, length of ship is 0
         else
         {
             length = 0;
             return -1;
         }
+
+        // next spec index
         j++;
 
-        //printf("%d", j);
-        //printf("%c" ,spec[j]);
+        // get x into int form
         x = spec[j] - '0';
-        //printf("x = %d \n", x);
+
+        // next spec index
         j++;
 
-        //printf("%c" ,spec[j]);
+        // get y into int form
         y = spec[j] - '0';
-        //printf("y = %d \n", y);
+
+        // next spec index
         j++;
 
-       // printf("%c", spec[j-3]);
+        // If capital, add horizontal with valid check
         if (spec[j-3] == 'C' || spec[j-3] == 'B' || spec[j-3] == 'D' || spec[j-3] == 'S' || spec[j-3] == 'P')
         {
-           // printf("\nHere\n");
-            //check1 = add_ship_horizontal(&GAME->players[player], x, y, length);
-            //check1 = add_ship_horizontal(&player_info, x, y, length);
             check1 = add_ship_horizontal(player_info, x, y, length);
-            //printf("H Updated SHIPS: %llu\n" , player_info->ships);
-            //printf("H Updated SHIPS: %llu\n" ,&GAME->players[player].ships);
-            //printf("H Updated SHIPS: %llu\n" ,game->players[player].ships);
-            //printf("Updated SHIPS: %llu\n" , &GAME->players[player].ships);
             if (check1 == -1)
             {
                 return -1;
             }
         }
+        // if lower case, add verticly, with valid check
         else if (spec[j-3] == 'c' || spec[j-3] == 'b' || spec[j-3] == 'd' || spec[j-3] == 's' || spec[j-3] == 'p')
         {
-            //add_ship_vertical(&GAME->players[player], x, y, length);
-            //check1 = add_ship_vertical(&GAME->players[player], x, y, length);
             check1 = add_ship_vertical(player_info, x, y, length);
-            //printf("V Updated SHIPS: %llu\n" , player_info->ships);
-            //printf("V Updated SHIPS: %llu\n" ,&GAME->players[player].ships);
-            //printf("V Updated SHIPS: %llu\n" ,game->players[player].ships);
             if (check1 == -1)
             {
                 return -1;
             }
         }
-        else
-        {
-
+        // else error
+        else{
         }
 
     }
+    // if player 1 has loaded a board, start game with player 0 going first.
+    // Here player 0 must load before player 1 for game to work
     if (player == 1)
     {
         game->status = PLAYER_0_TURN;
     }
+    // valid return
     return 1;
-
 
     // if it is valid, you should write the corresponding unsigned
     // long long value into the Game->players[player].ships data
@@ -486,34 +497,25 @@ int add_ship_horizontal(player_info *player, int x, int y, int length) {
     int newy = y;
     unsigned long long t;
     // new var for ship, set ships to this new var at the end
-    unsigned long long p = player->ships;
+    unsigned long long p = player->ships; // temp var
 
     // for each length of the ship, get bitval and check to make sure there is no ship there already
-    // if no new ship, set bitval position
+    // if no new ship, set bitval position and set p to be set with new ship posotion
     for (int i = x; i < (x + length); i++)
     {
-        //printf("\nSHIPS H: %llu\n" ,p);
         t = xy_to_bitval(newx,newy);
-        //printf("XY : %d %d \n" , newx, newy);
-        //printf("xy to bit val: %llu\n", t);
-        //player->ships = player->ships | t;
-        //printf("New SHIPS: %llu\n" ,player->ships);
         newx += 1;
         if ((t & p) != 0)
         {
-            //printf("Should be -1\n");
             return -1;
         }
         else
         {
             p = p | t;
-            //printf("New SHIPS: %llu\n" ,p);
         }
     }
-    //printf("Should be 1\n\n");
-    //player->ships = t & player->ships;
+    // set ships to the new value
     player->ships = p;
-    //printf("Updated SHIPS H: %llu\n" ,player->ships);
     return 1;
 
 }
@@ -528,34 +530,25 @@ int add_ship_vertical(player_info *player, int x, int y, int length) {
     int newy = y;
     unsigned long long t;
     // new var for ship, set ships to this new var at the end
-    unsigned long long p = player->ships;
+    unsigned long long p = player->ships; // temp var
 
     // for each length of the ship, get bitval and check to make sure there is no ship there already
     // if no new ship, set bitval position
     for (int i = y; i < (y + length); i++)
     {
-        //printf("\nSHIPS V: %llu\n" ,p);
         t = xy_to_bitval(newx,newy);
-       // printf("XY : %d %d \n" , newx, newy);
-       // printf("xy to bit val: %llu\n", t);
-        //player->ships = player->ships | t;
-        //printf("New SHIPS: %llu\n" ,player->ships);
         newy += 1;
         if ((t & p) != 0)
         {
-          //  printf("Should be -1\n");
             return -1;
         }
         else
         {
             p = p | t;
-         //   printf("New SHIPS: %llu\n" ,p);
         }
     }
-   // printf("Should be 1\n");
-    //player->ships = t & player->ships;
+    // set ships now
     player->ships = p;
-    //printf("Updated SHIPS V: %llu\n" ,player->ships);
     return 1;
 
 }
