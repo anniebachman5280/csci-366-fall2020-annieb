@@ -55,7 +55,7 @@ void repl_execute_command(struct char_buff * buffer) {
             printf("? - show help\n");
             printf("load [0-1] <string> - load a ship layout file for the given player\n");
             printf("show [0-1] - shows the board for the given player\n");
-            printf("fire [0-1] [0-7] [0-7] - fire at the given position\n");
+            printf("fire [0-1] [0-7] [0-7] - the given player fires at the given position\n");
             printf("say <string> - Send the string to all players as part of a chat\n");
             printf("reset - reset the game\n");
             printf("server - start the server\n");
@@ -106,7 +106,14 @@ void repl_execute_command(struct char_buff * buffer) {
         } else if (strcmp(command, "shortcut") == 0) {
             // update player 1 to only have a single ship in position 0, 0
             game_get_current()->players[1].ships = 1ull;
-        } else {
+        }
+        else if (strcmp(command, "say") == 0){
+/*            char_buff *sayrepl = cb_create(2000);
+            cb_append(sayrepl, command);
+            cb_write(SERVER->player_sockets[0], sayrepl);
+            cb_write(SERVER->player_sockets[1], sayrepl);*/
+        }
+        else {
             printf("Unknown Command: %s\n", command);
         }
     }
