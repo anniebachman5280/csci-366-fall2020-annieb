@@ -15,10 +15,15 @@
 #include<unistd.h>    //write
 
 static game_server *SERVER;
+static pthread_mutex_t *LOCK;
 
 void init_server() {
     if (SERVER == NULL) {
         SERVER = calloc(1, sizeof(struct game_server));
+        LOCK = malloc(sizeof(pthread_mutex_t));
+        pthread_mutex_init(LOCK, NULL);
+        pthread_mutex_lock(LOCK);
+        pthread_mutex_unlock(LOCK);
     } else {
         printf("Server already started");
     }
@@ -151,6 +156,9 @@ int handle_client_connect(int player) {
                 }
                 // fire
                 else if (strcmp(command, "fire") == 0) {
+                    // lock pthread lock
+                    pthread_mutex_lock(LOCK);
+
                     // two input args for the x, y to fire at, must make into ints
                     char* arg1 = cb_next_token(input_buffer);
                     char* arg2 = cb_next_token(input_buffer);
@@ -248,6 +256,9 @@ int handle_client_connect(int player) {
                     cb_reset(output_buffer);
                     cb_append(output_buffer, "\nbattleBit (? for hekp) > ");
                     cb_write(client_socket_fd, output_buffer);
+
+                    // unlock pthread
+                    pthread_mutex_unlock(LOCK);
                 }
                 // say
                 else if (strcmp(command, "say") == 0){
@@ -284,11 +295,14 @@ int handle_client_connect(int player) {
                     cb_write(client_socket_fd, output_buffer);
 
                 }
+                // still dont know how to handle player hitting enter as it ends the session
                 else if (command != NULL){
                     cb_append(output_buffer, "Command was :");
                     cb_append(output_buffer, command);
                     cb_write(client_socket_fd, output_buffer);
                 }
+                    // still dont know how to handle player hitting enter as it ends the session
+                    // problem for another time
                 else
                 {
                     cb_reset(output_buffer);
