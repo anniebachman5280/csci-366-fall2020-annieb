@@ -235,6 +235,7 @@ int handle_client_connect(int player) {
                         {
                             cb_append(firem, "PLAYER 0 WINS!");
                             server_broadcast(firem);
+                           // puts("PLAYER 0 WINS!");
 
                         } else if (game_get_current()->status == 5)
                         {
@@ -251,26 +252,30 @@ int handle_client_connect(int player) {
                     cb_append(p, "\n");
                     char *n = "";
                     if (player == 1){
-                        printf("Player 1 says: ");
-                        puts("okay");
-                        cb_append(p, "Player 1 says : ");
+                        //printf("Player 1 says: ");
+                        //puts("Player 1 says: ");
+                        cb_append(p, "Player 1 says: ");
                     }
                     else if (player == 0)
                     {
-                        printf("Player 0 says: ");
-                        cb_append(p, "Player 0 says : ");
+                       // printf("Player 0 says: ");
+                        //puts("Player 0 says: ");
+                        cb_append(p, "Player 0 says: ");
                     }
                     char *test = cb_next_token(input_buffer);
-                    printf(" ?%s", test);
+                    //printf(" %s", test);
+                   // puts(test);
+                   // puts(" ");
 
                     while (test != NULL)
                    {
                         cb_append(p, test);
                         cb_append(p, " ");
                         test = cb_next_token(input_buffer);
-                        printf("%s ", test);
+                        //printf("%s ", test);
+                       // puts(test);
                    }
-
+                   // puts("plaer says " + p);
                     cb_append(p, "\n");
                     server_broadcast(p);
 
@@ -280,7 +285,7 @@ int handle_client_connect(int player) {
                     cb_append(output_buffer, "\nbattleBit (? for hekp) > ");
                     cb_write(client_socket_fd, output_buffer);
 
-                    printf("Here %s", test);
+                   // printf("Here %s", test);
 
                 }
                 else if (command != NULL){
@@ -304,7 +309,7 @@ int handle_client_connect(int player) {
 void server_broadcast(char_buff *msg) {
     cb_write(SERVER->player_sockets[0], msg);
     cb_write(SERVER->player_sockets[1], msg);
-    //printf("1%s", msg->buffer);
+    printf("%s", msg->buffer);
 }
 
 int run_server() {
